@@ -1,5 +1,7 @@
 package com.github.syncwrld.prankedbw.discordbot.discord;
 
+import com.github.syncwrld.prankedbw.discordbot.discord.task.MatchAvailabilityLabor;
+import com.github.syncwrld.prankedbw.discordbot.shared.cache.Caches;
 import com.github.syncwrld.prankedbw.discordbot.spigot.PRankedSpigotPlugin;
 import com.google.common.base.Stopwatch;
 import lombok.AccessLevel;
@@ -12,6 +14,11 @@ import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Getter(AccessLevel.PUBLIC)
 public class PRankedRobotBootstrapper implements ApplicationBootstrapper, EventListener {
@@ -33,7 +40,14 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper, EventL
 			return;
 		}
 		
-		this.jda = JDABuilder.createDefault(token).enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES).build();
+		try {
+			this.jda = JDABuilder.createDefault(token)
+				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
+				.build();
+		} catch (Exception e) {
+			this.plugin.log("§cNão foi possível iniciar o bot do Discord.");
+			throw new RuntimeException(e);
+		}
 	}
 	
 	@Override
@@ -55,7 +69,25 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper, EventL
 	
 	private void loadSystems() {
 		/*
+		Carregando algumas coisas em memória
+		 */
+		Caches.setup(this.plugin);
+		
+		/*
+		Inicializando as tarefas constantes (trabalhos)
+		 */
+		createScheduler().scheduleAtFixedRate(new MatchAvailabilityLabor(this), 0, 1, TimeUnit.SECONDS);
+		
+		/*
 		Registrando eventos
 		 */
+	}
+	
+	public ScheduledExecutorService createScheduler() {
+		return Executors.newSingleThreadScheduledExecutor();
+	}
+	
+	public ExecutorService createExecutorService() {
+		return Executors.newCachedThreadPool();
 	}
 }

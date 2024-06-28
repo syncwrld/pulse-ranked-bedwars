@@ -23,7 +23,9 @@ dependencies {
     /*
     At runtime
      */
-    implementation("net.dv8tion:JDA:5.0.0-beta.24")
+    implementation("net.dv8tion:JDA:5.0.0-beta.24") {
+        exclude(module = "opus-java")
+    }
 
     /*
     Annotation processors
@@ -32,7 +34,7 @@ dependencies {
 }
 
 tasks.withType<ShadowJar> {
-    archiveClassifier.set("")
+    archiveClassifier.set("") // Removing the classifier
 }
 
 tasks.withType<JavaCompile> {
@@ -42,7 +44,7 @@ tasks.withType<JavaCompile> {
 val copyJar by tasks.registering(Copy::class) {
     dependsOn(tasks.withType<ShadowJar>())
     from(tasks.shadowJar.get().archiveFile)
-    into("../result")
+    into("../artifacts")
     rename { "PackedJDA.jar" }
 }
 

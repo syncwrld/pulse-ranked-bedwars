@@ -20,11 +20,11 @@ dependencies {
      */
     compileOnly("org.projectlombok:lombok:1.18.24")
     compileOnly("org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT")
+    compileOnly(files("../result/PackedJDA.jar"))
 
     /*
     At runtime
      */
-    implementation(files("../result/PackedJDA.jar"))
     implementation("com.github.syncwrld:syncBooter:v0.1.4.5")
 
     /*
@@ -45,7 +45,7 @@ tasks.withType<JavaCompile> {
 val copyJar by tasks.registering(Copy::class) {
     dependsOn(tasks.withType<ShadowJar>())
     from(tasks.shadowJar.get().archiveFile)
-    into("../result")
+    into("../artifacts")
     rename { "PRanked - 4s Bot.jar" }
 }
 

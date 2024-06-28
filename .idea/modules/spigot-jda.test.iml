@@ -3,22 +3,15 @@
   <component name="NewModuleRootManager">
     <output-test url="file://$MODULE_DIR$/../../spigot-jda/build/classes/java/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../spigot-jda/src/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../spigot-jda/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../spigot-jda/src/test/resources" type="java-test-resource" />
-    </content>
+    <content url="file://$MODULE_DIR$/../../spigot-jda/src/test" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="spigot-jda.main" />
     <orderEntry type="library" name="Gradle: net.dv8tion:JDA:5.0.0-beta.24" level="project" />
-    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:2.0.13" level="project" />
     <orderEntry type="library" name="Gradle: com.neovisionaries:nv-websocket-client:2.14" level="project" />
     <orderEntry type="library" name="Gradle: com.squareup.okhttp3:okhttp:4.12.0" level="project" />
-    <orderEntry type="library" name="Gradle: club.minnced:opus-java:1.1.1" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.commons:commons-collections4:4.4" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10" level="project" />
-    <orderEntry type="library" name="Gradle: club.minnced:opus-java-api:1.1.1" level="project" />
-    <orderEntry type="library" name="Gradle: club.minnced:opus-java-natives:1.1.1" level="project" />
     <orderEntry type="library" name="Gradle: com.squareup.okio:okio-jvm:3.6.0" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.9.10" level="project" />
@@ -29,7 +22,6 @@
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.17.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.17.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: net.bytebuddy:byte-buddy:1.14.9" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: net.java.dev.jna:jna:4.4.0" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="spigot-jda.main" />
 </module>

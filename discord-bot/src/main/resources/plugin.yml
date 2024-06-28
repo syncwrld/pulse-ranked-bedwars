@@ -1,0 +1,7 @@
+main: com.github.syncwrld.prankedbw.discordbot.spigot.PRankedSpigotPlugin
+name: PRanked4sBOT
+version: 1.0
+api-version: 1.13
+authors: [ syncwrld ]
+
+softdepend: [ PackedJDA ]

@@ -8,7 +8,7 @@ import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
 @Getter(AccessLevel.PUBLIC)
 public class PRankedSpigotPlugin extends BukkitPlugin {
 	
-	private final PRankedRobotBootstrapper bootstrapper = new PRankedRobotBootstrapper(this);
+	private PRankedRobotBootstrapper bootstrapper;
 	
 	@Override
 	protected void whenLoad() {
@@ -20,6 +20,19 @@ public class PRankedSpigotPlugin extends BukkitPlugin {
 	
 	@Override
 	protected void whenEnable() {
+		try {
+			Class.forName("com.github.syncwrld.packedjda.PackedJdaPlugin");
+		} catch (ClassNotFoundException e) {
+			this.log(
+				"&cO plugin 'PackedJDA' não foi encontrado. Por favor, instale-o.",
+				"&cVocê pode encontrar o plugin no repositório do projeto.",
+				"&cSe você já instalou, certifique-se de que ele está habilitado.",
+				"&cO sistema inteiro depende dele, o bot será desabilitado, pois o funcionamento está comprometido."
+			);
+			return;
+		}
+		
+		this.bootstrapper = new PRankedRobotBootstrapper(this);
 		this.bootstrapper.enable();
 	}
 	

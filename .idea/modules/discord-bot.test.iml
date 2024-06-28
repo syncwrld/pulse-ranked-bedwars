@@ -3,22 +3,10 @@
   <component name="NewModuleRootManager">
     <output-test url="file://$MODULE_DIR$/../../discord-bot/build/classes/java/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../discord-bot/src/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../discord-bot/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../discord-bot/src/test/resources" type="java-test-resource" />
-    </content>
+    <content url="file://$MODULE_DIR$/../../discord-bot/src/test" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="discord-bot.main" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../result/PackedJDA.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="Gradle: com.github.syncwrld:syncBooter:v0.1.4.5" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="discord-bot.main" />
