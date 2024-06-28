@@ -1,0 +1,12 @@
+# PRanked - 4s Bot by syncwrld #
+#       www.syncwrld.tech      #
+
+# Para desenvolvedores #
+debug: false
+
+# Configure o token do seu bot #
+discord-bot-token: ''
+
+# O canal do servidor em que os jogadores ficarão #
+# esperando por uma partida #
+wait-channel-id: ''

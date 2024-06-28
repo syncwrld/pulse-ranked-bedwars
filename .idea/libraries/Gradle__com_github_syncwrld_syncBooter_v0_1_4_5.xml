@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.syncwrld:syncBooter:v0.1.4.5" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.github.syncwrld" artifactId="syncBooter" version="v0.1.4.5" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/syncwrld/syncBooter/v0.1.4.5/syncBooter-v0.1.4.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

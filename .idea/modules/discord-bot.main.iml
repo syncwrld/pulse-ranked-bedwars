@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="discord-bot:main" external.linked.project.path="$MODULE_DIR$/../../discord-bot" external.root.project.path="$MODULE_DIR$/../../discord-bot" external.system.id="GRADLE" external.system.module.group="com.github.syncwrld.prankedbw" external.system.module.type="sourceSet" external.system.module.version="1.0" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="minecraft" name="Minecraft">
+      <configuration>
+        <autoDetectTypes>
+          <platformType>SPIGOT</platformType>
+        </autoDetectTypes>
+        <projectReimportVersion>1</projectReimportVersion>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../../discord-bot/build/classes/java/main" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../discord-bot/src/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../discord-bot/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../discord-bot/src/main/resources" type="java-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../result/PackedJDA.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.projectlombok:lombok:1.18.24" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.syncwrld:syncBooter:v0.1.4.5" level="project" />
+  </component>
+</module>
