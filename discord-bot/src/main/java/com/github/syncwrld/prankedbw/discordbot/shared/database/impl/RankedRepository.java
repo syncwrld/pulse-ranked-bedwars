@@ -39,14 +39,14 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	}
 	
 	public PlayerAccount createAccount(Player player) {
-		PlayerProperties properties = new PlayerProperties(0, false);
+		PlayerProperties properties = new PlayerProperties(0, false, null);
 		
 		this.insert(this.getName(), this.connection, (String) null, player.getName(), SharedConstants.GSON.toJson(properties));
 		
 		return new PlayerAccount(player.getName(), null, properties);
 	}
 	
-	public PlayerAccount getAccount(String username) {
+	public PlayerAccount findByMCNickname(String username) {
 		String query = "select * from ? where username = ?";
 		
 		try (PreparedStatement statement = this.prepare(this.connection, query)) {
@@ -56,6 +56,25 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 			try (ResultSet resultSet = result(statement)) {
 				if (resultSet.next()) {
 					return new PlayerAccount(username, resultSet.getString("discord_id"), SharedConstants.GSON.fromJson(resultSet.getString("properties"), PlayerProperties.class));
+				}
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		
+		return null;
+	}
+	
+	public PlayerAccount findByDiscordId(String discordId) {
+		String query = "select * from ? where discord_id = ?";
+		
+		try (PreparedStatement statement = this.prepare(this.connection, query)) {
+			statement.setString(1, this.getName());
+			statement.setString(2, discordId);
+			
+			try (ResultSet resultSet = result(statement)) {
+				if (resultSet.next()) {
+					return new PlayerAccount(resultSet.getString("username"), discordId, SharedConstants.GSON.fromJson(resultSet.getString("properties"), PlayerProperties.class));
 				}
 			}
 		} catch (SQLException e) {
@@ -91,25 +110,6 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 		}
 	}
 	
-	public PlayerAccount findByDiscordId(String discordId) {
-		String query = "select * from ? where discord_id = ?";
-		
-		try (PreparedStatement statement = this.prepare(this.connection, query)) {
-			statement.setString(1, this.getName());
-			statement.setString(2, discordId);
-			
-			try (ResultSet resultSet = result(statement)) {
-				if (resultSet.next()) {
-					return new PlayerAccount(resultSet.getString("username"), discordId, SharedConstants.GSON.fromJson(resultSet.getString("properties"), PlayerProperties.class));
-				}
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-		
-		return null;
-	}
-	
 	public void bindDiscord(String discordId, String username) {
 		String query = "replace into ? values (?, ?)";
 		
@@ -124,13 +124,11 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	}
 	
 	public HashSet<PlayerAccount> fetchAll() {
-		String query = "select * from ?";
+		String query = "select * from " + this.getName();
 		
-		try (PreparedStatement statement = this.prepare(this.connection, query)) {
-			statement.setString(1, this.getName());
-			
-			try (ResultSet resultSet = result(statement)) {
-				HashSet<PlayerAccount> accounts = new HashSet<>();
+		try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+			try (ResultSet resultSet = statement.executeQuery()) {
+				HashSet<PlayerAccount> accounts = new HashSet<>(resultSet.getFetchSize());
 				
 				while (resultSet.next()) {
 					accounts.add(new PlayerAccount(resultSet.getString("username"), resultSet.getString("discord_id"), SharedConstants.GSON.fromJson(resultSet.getString("properties"), PlayerProperties.class)));
@@ -138,8 +136,8 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 				
 				return accounts;
 			}
-		} catch (SQLException e) {
-			return new HashSet<>();
+		} catch (SQLException | NullPointerException e) {
+			return new HashSet<>(0);
 		}
 	}
 	

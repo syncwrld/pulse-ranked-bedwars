@@ -11,5 +11,6 @@ public class Repositories {
 	public static void setup(PRankedSpigotPlugin plugin) {
 		Connection connection = DatabaseHandler.getConnection(plugin);
 		RANKED_REPOSITORY = new RankedRepository(connection);
+		RANKED_REPOSITORY.createTables();
 	}
 }

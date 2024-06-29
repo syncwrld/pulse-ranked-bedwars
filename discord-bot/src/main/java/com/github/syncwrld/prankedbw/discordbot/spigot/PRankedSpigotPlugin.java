@@ -1,6 +1,8 @@
 package com.github.syncwrld.prankedbw.discordbot.spigot;
 
 import com.github.syncwrld.prankedbw.discordbot.discord.PRankedRobotBootstrapper;
+import com.github.syncwrld.prankedbw.discordbot.spigot.event.AuthCodeInputListener;
+import com.github.syncwrld.prankedbw.discordbot.spigot.event.ConnectionTrafficListener;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
@@ -21,16 +23,18 @@ public class PRankedSpigotPlugin extends BukkitPlugin {
 	@Override
 	protected void whenEnable() {
 		try {
-			Class.forName("com.github.syncwrld.packedjda.PackedJdaPlugin");
+			Class.forName("com.github.syncwrld.packedjc.PackedJCPlugin");
 		} catch (ClassNotFoundException e) {
 			this.log(
-				"&cO plugin 'PackedJDA' não foi encontrado. Por favor, instale-o.",
-				"&cVocê pode encontrar o plugin no repositório do projeto.",
-				"&cSe você já instalou, certifique-se de que ele está habilitado.",
-				"&cO sistema inteiro depende dele, o bot será desabilitado, pois o funcionamento está comprometido."
+				"O plugin 'PackedJC' não foi encontrado. Por favor, instale-o.",
+				"Você pode encontrar o plugin no repositório do projeto.",
+				"Se você já instalou, certifique-se de que ele está habilitado.",
+				"O sistema inteiro depende dele, o bot será desabilitado, pois o funcionamento está comprometido."
 			);
 			return;
 		}
+		
+		this.registerListeners(new AuthCodeInputListener(), new ConnectionTrafficListener());
 		
 		this.bootstrapper = new PRankedRobotBootstrapper(this);
 		this.bootstrapper.enable();

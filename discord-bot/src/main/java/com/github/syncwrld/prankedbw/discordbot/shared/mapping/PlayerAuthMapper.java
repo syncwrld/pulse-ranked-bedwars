@@ -31,4 +31,8 @@ public class PlayerAuthMapper {
 		return !authCodes.get(username).getKey().equals(authCode);
 	}
 	
+	public static boolean isValidating(String username) {
+		return authCodes.containsKey(username);
+	}
+	
 }

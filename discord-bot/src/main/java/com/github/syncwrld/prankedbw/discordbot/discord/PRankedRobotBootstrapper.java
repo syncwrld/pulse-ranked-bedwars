@@ -1,5 +1,6 @@
 package com.github.syncwrld.prankedbw.discordbot.discord;
 
+import com.github.syncwrld.prankedbw.discordbot.discord.command.BindCommand;
 import com.github.syncwrld.prankedbw.discordbot.discord.task.MatchAvailabilityLabor;
 import com.github.syncwrld.prankedbw.discordbot.shared.cache.Caches;
 import com.github.syncwrld.prankedbw.discordbot.shared.database.Repositories;
@@ -11,6 +12,7 @@ import me.syncwrld.booter.ApplicationBootstrapper;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.user.User;
+import org.javacord.api.listener.GloballyAttachableListener;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,6 +24,8 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 	
 	private final PRankedSpigotPlugin plugin;
 	private DiscordApi client;
+	
+	private String voiceChannelCategoryId;
 	private String guildId;
 	
 	public PRankedRobotBootstrapper(PRankedSpigotPlugin plugin) {
@@ -47,6 +51,7 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 		}
 		
 		this.guildId = this.plugin.getConfiguration().getString("guild-id");
+		this.voiceChannelCategoryId = this.plugin.getConfiguration().getString("voice-channel-category-id");
 	}
 	
 	@Override
@@ -58,26 +63,29 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 		User robotYourself = this.client.getYourself();
 		
 		this.plugin.log((
-			"&7Logado com sucesso! (@" + robotYourself.getName() + ") | Em caso de dúvidas, utilize 'pr!help'"
+			"Logado com sucesso! (@" + robotYourself.getName() + ") | Em caso de dúvidas, utilize 'pr!help'"
 		));
+		
+		this.loadSystems();
 	}
 	
 	private void loadSystems() {
 		/*
 		Carregando algumas coisas em memória e conectando ao banco de dados
 		 */
-		Caches.setup(this.plugin);
 		Repositories.setup(this.plugin);
+		Caches.setup(this.plugin);
 		
 		/*
 		Inicializando as tarefas constantes (trabalhos)
 		 */
-		createScheduler().scheduleAtFixedRate(new MatchAvailabilityLabor(this), 0, 1, TimeUnit.SECONDS);
+		createScheduler().scheduleAtFixedRate(new MatchAvailabilityLabor(this), 0, 3, TimeUnit.SECONDS);
 		createScheduler().scheduleAtFixedRate(new PlayerAuthMapperLabor(), 0, 3, TimeUnit.SECONDS);
 		
 		/*
-		Registrando eventos
+		Registrando ouvintes de eventos
 		 */
+		this.registerListeners(new BindCommand());
 	}
 	
 	public ScheduledExecutorService createScheduler() {
@@ -86,5 +94,11 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 	
 	public ExecutorService createExecutorService() {
 		return Executors.newCachedThreadPool();
+	}
+	
+	public void registerListeners(GloballyAttachableListener... listeners) {
+		for (GloballyAttachableListener listener : listeners) {
+			this.client.addListener(listener);
+		}
 	}
 }

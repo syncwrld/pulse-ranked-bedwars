@@ -1,7 +1,5 @@
 package com.github.syncwrld.prankedbw.discordbot.discord.command;
 
-import com.github.syncwrld.prankedbw.discordbot.discord.Listener;
-import com.github.syncwrld.prankedbw.discordbot.discord.PRankedRobotBootstrapper;
 import com.github.syncwrld.prankedbw.discordbot.shared.cache.Caches;
 import com.github.syncwrld.prankedbw.discordbot.shared.gen.AuthCodeGenerator;
 import com.github.syncwrld.prankedbw.discordbot.shared.mapping.PlayerAuthMapper;
@@ -11,19 +9,15 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.javacord.api.listener.message.MessageCreateListener;
 
 import java.awt.*;
 import java.util.Optional;
 
-public class BindCommand implements Listener<MessageCreateEvent> {
-	private final PRankedRobotBootstrapper bootstrapper;
-	
-	public BindCommand(PRankedRobotBootstrapper bootstrapper) {
-		this.bootstrapper = bootstrapper;
-	}
+public class BindCommand implements MessageCreateListener {
 	
 	@Override
-	public void handle(MessageCreateEvent event) {
+	public void onMessageCreate(MessageCreateEvent event) {
 		long authorId = event.getMessageAuthor().getId();
 		Optional<Server> possibleServer = event.getServer();
 		
@@ -80,6 +74,13 @@ public class BindCommand implements Listener<MessageCreateEvent> {
 		embedBuilder.addField("Código de autorização", authCode, true);
 		embedBuilder.setFooter("Este código de autorização é válido por 5 minutos.");
 		
-		event.getMessage().reply(embedBuilder.build()).join();
+		member.openPrivateChannel().thenAccept(channel -> {
+			channel.sendMessage(embedBuilder).join();
+		}).exceptionally(throwable -> {
+			event.getMessage().reply("Não foi possível te enviar o código via DM, por favor abra sua DM para mensagens e tente novamente.").join();
+			return null;
+		});
+		
+		event.getMessage().reply("Tudo jóia! Verifique sua caixa de entrada do Discord.").join();
 	}
 }
