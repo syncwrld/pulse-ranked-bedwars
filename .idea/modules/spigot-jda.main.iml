@@ -13,18 +13,17 @@
   <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/../../spigot-jda/build/classes/java/main" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../spigot-jda/build/generated/sources/annotationProcessor/java/main">
-      <sourceFolder url="file://$MODULE_DIR$/../../spigot-jda/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
-    </content>
     <content url="file://$MODULE_DIR$/../../spigot-jda/src/main">
       <sourceFolder url="file://$MODULE_DIR$/../../spigot-jda/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../spigot-jda/src/main/resources" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.projectlombok:lombok:1.18.24" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Gradle: net.dv8tion:JDA:5.0.0-beta.24" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0" level="project" />
+    <orderEntry type="library" name="Gradle: net.dv8tion:JDA:5.0.0-beta.23" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.slf4j:slf4j-api:1.8.0-beta4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.logging.log4j:log4j-api:2.18.0" level="project" />
     <orderEntry type="library" name="Gradle: com.neovisionaries:nv-websocket-client:2.14" level="project" />
     <orderEntry type="library" name="Gradle: com.squareup.okhttp3:okhttp:4.12.0" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.commons:commons-collections4:4.4" level="project" />
@@ -35,9 +34,9 @@
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.9.10" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: net.sf.trove4j:core:3.1.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.17.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.17.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.17.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: net.bytebuddy:byte-buddy:1.14.9" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.16.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.16.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.slf4j:slf4j-api:1.7.36" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.16.0" level="project" />
   </component>
 </module>

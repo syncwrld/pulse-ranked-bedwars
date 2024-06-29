@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.javacord:javacord-api:3.8.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.javacord" artifactId="javacord-api" version="3.8.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.javacord/javacord-api/3.8.0/24b69483955233f1002d5346c9891f05822988ed/javacord-api-3.8.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -40,4 +40,9 @@ public class PRankedSpigotPlugin extends BukkitPlugin {
 	protected void whenDisable() {
 		this.bootstrapper.disable();
 	}
+	
+	@Override
+	public void log(String message) {
+		this.getLogger().info(message.replace("&", "§"));
+	}
 }

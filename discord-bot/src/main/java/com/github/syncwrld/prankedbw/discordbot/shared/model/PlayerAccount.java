@@ -6,5 +6,6 @@ import lombok.Data;
 @Data
 public class PlayerAccount {
 	private final String username;
+	private final String discordId;
 	private final PlayerProperties properties;
 }

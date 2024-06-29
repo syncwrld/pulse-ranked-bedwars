@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.discord4j:discord4j-voice:3.2.6" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.discord4j" artifactId="discord4j-voice" version="3.2.6" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.discord4j/discord4j-voice/3.2.6/9e361688a72ece887e9e0f63370dcbe74b98b98e/discord4j-voice-3.2.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

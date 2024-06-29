@@ -2,18 +2,15 @@ package com.github.syncwrld.prankedbw.discordbot.discord;
 
 import com.github.syncwrld.prankedbw.discordbot.discord.task.MatchAvailabilityLabor;
 import com.github.syncwrld.prankedbw.discordbot.shared.cache.Caches;
+import com.github.syncwrld.prankedbw.discordbot.shared.database.Repositories;
+import com.github.syncwrld.prankedbw.discordbot.shared.mapping.labor.PlayerAuthMapperLabor;
 import com.github.syncwrld.prankedbw.discordbot.spigot.PRankedSpigotPlugin;
-import com.google.common.base.Stopwatch;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.syncwrld.booter.ApplicationBootstrapper;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.session.ReadyEvent;
-import net.dv8tion.jda.api.hooks.EventListener;
-import net.dv8tion.jda.api.requests.GatewayIntent;
-import org.jetbrains.annotations.NotNull;
+import org.javacord.api.DiscordApi;
+import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.user.User;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,10 +18,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Getter(AccessLevel.PUBLIC)
-public class PRankedRobotBootstrapper implements ApplicationBootstrapper, EventListener {
+public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 	
 	private final PRankedSpigotPlugin plugin;
-	private JDA jda;
+	private DiscordApi client;
+	private String guildId;
 	
 	public PRankedRobotBootstrapper(PRankedSpigotPlugin plugin) {
 		this.plugin = plugin;
@@ -41,13 +39,14 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper, EventL
 		}
 		
 		try {
-			this.jda = JDABuilder.createDefault(token)
-				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
-				.build();
+			this.client = new DiscordApiBuilder().setAllIntents().setToken(token).login().join();
+			this.handleReady();
 		} catch (Exception e) {
 			this.plugin.log("§cNão foi possível iniciar o bot do Discord.");
 			throw new RuntimeException(e);
 		}
+		
+		this.guildId = this.plugin.getConfiguration().getString("guild-id");
 	}
 	
 	@Override
@@ -55,28 +54,26 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper, EventL
 	
 	}
 	
-	@Override
-	public void onEvent(@NotNull GenericEvent event) {
-		if (event instanceof ReadyEvent) {
-			this.plugin.log("§aO bot ficou online com sucesso.");
-			this.plugin.log("§7Iniciando carregamento dos sistemas...");
-			
-			Stopwatch stopwatch = Stopwatch.createStarted();
-			this.loadSystems();
-			this.plugin.log("§aCarregamento finalizado em " + stopwatch.stop() + ". (Em caso de dúvidas, utilize 'pr!help')");
-		}
+	public void handleReady() {
+		User robotYourself = this.client.getYourself();
+		
+		this.plugin.log((
+			"&7Logado com sucesso! (@" + robotYourself.getName() + ") | Em caso de dúvidas, utilize 'pr!help'"
+		));
 	}
 	
 	private void loadSystems() {
 		/*
-		Carregando algumas coisas em memória
+		Carregando algumas coisas em memória e conectando ao banco de dados
 		 */
 		Caches.setup(this.plugin);
+		Repositories.setup(this.plugin);
 		
 		/*
 		Inicializando as tarefas constantes (trabalhos)
 		 */
 		createScheduler().scheduleAtFixedRate(new MatchAvailabilityLabor(this), 0, 1, TimeUnit.SECONDS);
+		createScheduler().scheduleAtFixedRate(new PlayerAuthMapperLabor(), 0, 3, TimeUnit.SECONDS);
 		
 		/*
 		Registrando eventos

@@ -13,10 +13,20 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/spigot-jda" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/spigot-d4j" />
+        <option name="gradleHome" value="" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/spigot-jda" />
+            <option value="$PROJECT_DIR$/spigot-d4j" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/spigot-jc" />
+        <option name="gradleHome" value="" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/spigot-jc" />
           </set>
         </option>
       </GradleProjectSettings>

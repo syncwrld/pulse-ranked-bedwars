@@ -8,5 +8,4 @@ import lombok.Data;
 public class PlayerProperties {
 	private int eloPoints;
 	private boolean discordSynchronized;
-	private String discordUserId;
 }

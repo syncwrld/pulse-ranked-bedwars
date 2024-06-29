@@ -6,9 +6,10 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/discord-bot.main.iml" filepath="$PROJECT_DIR$/.idea/modules/discord-bot.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/discord-bot.test.iml" filepath="$PROJECT_DIR$/.idea/modules/discord-bot.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/pranked-bedwars.iml" filepath="$PROJECT_DIR$/pranked-bedwars.iml" />
-      <module fileurl="file://$PROJECT_DIR$/spigot-jda.iml" filepath="$PROJECT_DIR$/spigot-jda.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/spigot-jda.main.iml" filepath="$PROJECT_DIR$/.idea/modules/spigot-jda.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/spigot-jda.test.iml" filepath="$PROJECT_DIR$/.idea/modules/spigot-jda.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spigot-d4j.iml" filepath="$PROJECT_DIR$/spigot-d4j.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/spigot-d4j.main.iml" filepath="$PROJECT_DIR$/.idea/modules/spigot-d4j.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spigot-jc.iml" filepath="$PROJECT_DIR$/spigot-jc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/spigot-jc.main.iml" filepath="$PROJECT_DIR$/.idea/modules/spigot-jc.main.iml" />
     </modules>
   </component>
 </project>

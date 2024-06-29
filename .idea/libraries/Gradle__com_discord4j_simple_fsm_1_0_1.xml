@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.discord4j:simple-fsm:1.0.1" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.discord4j" artifactId="simple-fsm" version="1.0.1" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.discord4j/simple-fsm/1.0.1/58cc3d3c4d25823eecb174a8e4807ba83299f36a/simple-fsm-1.0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

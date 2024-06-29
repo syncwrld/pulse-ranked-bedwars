@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.discord4j:discord-json-api:1.6.18" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.discord4j" artifactId="discord-json-api" version="1.6.18" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.discord4j/discord-json-api/1.6.18/f3ae4ecba6996ff5b455a85ba8a14681ffe42f13/discord-json-api-1.6.18.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

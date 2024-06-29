@@ -2,10 +2,12 @@ package com.github.syncwrld.prankedbw.discordbot.discord.task;
 
 import com.github.syncwrld.prankedbw.discordbot.discord.PRankedRobotBootstrapper;
 import com.github.syncwrld.prankedbw.discordbot.shared.cache.Caches;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import org.javacord.api.entity.channel.ServerVoiceChannel;
+import org.javacord.api.entity.channel.VoiceChannel;
+import org.javacord.api.entity.user.User;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class MatchAvailabilityLabor implements Runnable {
 	private final PRankedRobotBootstrapper robot;
@@ -16,15 +18,26 @@ public class MatchAvailabilityLabor implements Runnable {
 	
 	@Override
 	public void run() {
-		String waitChannelId = Caches.PREFERENCE_CACHE.getWaitChannelId();
-		VoiceChannel voiceChannel = this.robot.getJda().getVoiceChannelById(waitChannelId);
+		final String waitChannelId = Caches.PREFERENCE_CACHE.getWaitChannelId();
+		Optional<VoiceChannel> possibleVoiceChannel = this.robot.getClient().getVoiceChannelById(waitChannelId);
 		
-		if (voiceChannel == null) {
-			this.robot.getPlugin().log("§cNão foi possível encontrar o canal de espera de partidas.");
+		if (!possibleVoiceChannel.isPresent()) {
+			this.robot.getPlugin().log("&cO canal de espera deve ser um canal de voz. Verifique seu servidor.");
+			this.robot.getPlugin().log("&cNão foi possível encontrar o canal de espera. O plugin será desabilitado.");
+			this.robot.getPlugin().getServer().getPluginManager().disablePlugin(this.robot.getPlugin());
 			return;
 		}
 		
-		List<Member> members = voiceChannel.getMembers();
+		VoiceChannel voiceChannel = possibleVoiceChannel.get();
+		Optional<ServerVoiceChannel> possibleServerVC = voiceChannel.asServerVoiceChannel();
+	
+		if (!possibleServerVC.isPresent()) {
+			this.robot.getPlugin().log("&cO canal de espera deve ser um canal de voz do servidor configurado. Verifique seu servidor.");
+			this.robot.getPlugin().getServer().getPluginManager().disablePlugin(this.robot.getPlugin());
+			return;
+		}
 		
+		ServerVoiceChannel serverVoiceChannel = possibleServerVC.get();
+		Set<User> connectedUsers = serverVoiceChannel.getConnectedUsers();
 	}
 }

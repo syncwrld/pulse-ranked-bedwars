@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="spigot-d4j:main" external.linked.project.path="$MODULE_DIR$/../../spigot-d4j" external.root.project.path="$MODULE_DIR$/../../spigot-d4j" external.system.id="GRADLE" external.system.module.group="com.github.syncwrld.prankedbw" external.system.module.type="sourceSet" external.system.module.version="1.0" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="minecraft" name="Minecraft">
+      <configuration>
+        <autoDetectTypes>
+          <platformType>SPIGOT</platformType>
+        </autoDetectTypes>
+        <projectReimportVersion>1</projectReimportVersion>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../../spigot-d4j/build/classes/java/main" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../spigot-d4j/src/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../spigot-d4j/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../spigot-d4j/src/main/resources" type="java-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.discord4j:discord4j-core:3.2.6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.slf4j:slf4j-api:1.8.0-beta4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.logging.log4j:log4j-api:2.18.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.discord4j:discord4j-rest:3.2.6" level="project" />
+    <orderEntry type="library" name="Gradle: com.discord4j:discord4j-gateway:3.2.6" level="project" />
+    <orderEntry type="library" name="Gradle: com.discord4j:discord4j-voice:3.2.6" level="project" />
+    <orderEntry type="library" name="Gradle: com.discord4j:stores-jdk:3.2.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.discord4j:discord-json:1.6.18" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.discord4j:discord4j-common:3.2.6" level="project" />
+    <orderEntry type="library" name="Gradle: io.projectreactor.addons:reactor-extra:3.4.10" level="project" />
+    <orderEntry type="library" name="Gradle: com.discord4j:simple-fsm:1.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.discord4j:stores-api:3.2.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.discord4j:discord-json-api:1.6.18" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.14.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.14.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.14.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.14.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.projectreactor.netty:reactor-netty-http:1.0.33" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.ben-manes.caffeine:caffeine:2.8.8" level="project" />
+    <orderEntry type="library" name="Gradle: io.projectreactor:reactor-core:3.4.30" level="project" />
+    <orderEntry type="library" name="Gradle: com.austinv11.servicer:Servicer:1.0.3" level="project" />
+    <orderEntry type="library" name="Gradle: io.projectreactor.netty:reactor-netty-core:1.0.33" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-codec-http2:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-codec-http:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-resolver-dns-native-macos:osx-x86_64:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-resolver-dns:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-transport-native-epoll:linux-x86_64:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: org.checkerframework:checker-qual:3.8.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.errorprone:error_prone_annotations:2.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.reactivestreams:reactive-streams:1.0.4" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-handler-proxy:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-handler:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-codec:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-transport:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-buffer:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-common:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-resolver-dns-classes-macos:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-codec-dns:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-resolver:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-transport-classes-epoll:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-transport-native-unix-common:4.1.93.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-codec-socks:4.1.93.Final" level="project" />
+  </component>
+</module>

@@ -25,7 +25,7 @@
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../result/PackedJDA.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../artifacts/PackedJC.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

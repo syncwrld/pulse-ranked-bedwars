@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.discord4j:discord4j-common:3.2.6" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.discord4j" artifactId="discord4j-common" version="3.2.6" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.discord4j/discord4j-common/3.2.6/2c81abd4c8a5eacf18d4d195cd9c444eb65c639a/discord4j-common-3.2.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

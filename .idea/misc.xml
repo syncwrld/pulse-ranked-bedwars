@@ -6,7 +6,8 @@
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/discord-bot" />
-    <file type="web" url="file://$PROJECT_DIR$/spigot-jda" />
+    <file type="web" url="file://$PROJECT_DIR$/spigot-d4j" />
+    <file type="web" url="file://$PROJECT_DIR$/spigot-jc" />
   </component>
   <component name="MaterialThemeProjectNewConfig">
     <option name="metadata">

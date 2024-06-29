@@ -20,7 +20,7 @@ dependencies {
      */
     compileOnly("org.projectlombok:lombok:1.18.24")
     compileOnly("org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT")
-    compileOnly(files("../result/PackedJDA.jar"))
+    compileOnly(files("../artifacts/PackedJC.jar"))
 
     /*
     At runtime
