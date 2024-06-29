@@ -1,9 +1,11 @@
 package com.github.syncwrld.prankedbw.discordbot.shared.cache.impl;
 
 import com.github.syncwrld.prankedbw.discordbot.shared.model.PlayerAccount;
+import lombok.Data;
 
 import java.util.ArrayList;
 
+@Data
 public class UserCache {
 	private final ArrayList<PlayerAccount> accounts;
 	

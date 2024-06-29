@@ -28,4 +28,10 @@ public class Caches {
 			
 		plugin.log("Carregado " + playerAccounts.size() + " usuários no banco de dados.");
 	}
+	
+	public static void save() {
+		RankedRepository rankedRepository = Repositories.RANKED_REPOSITORY;
+		
+		USER_CACHE.getAccounts().forEach(rankedRepository::updateAccount);
+	}
 }

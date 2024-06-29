@@ -18,6 +18,13 @@ public class BindCommand implements MessageCreateListener {
 	
 	@Override
 	public void onMessageCreate(MessageCreateEvent event) {
+		Message message = event.getMessage();
+		String content = message.getContent();
+		
+		if (!content.startsWith("!bind") || event.getMessageAuthor().isBotUser()) {
+			return;
+		}
+		
 		long authorId = event.getMessageAuthor().getId();
 		Optional<Server> possibleServer = event.getServer();
 		
@@ -35,17 +42,15 @@ public class BindCommand implements MessageCreateListener {
 		}
 		
 		User member = memberById.get();
-		Message message = event.getMessage();
-		String content = message.getContent();
 		
 		String[] split = content.split(" ");
 		
-		if (split.length != 1) {
-			event.getMessage().reply("O uso correto é '!bind <usernaameDoMinecraft>'").join();
+		if (split.length < 2) {
+			event.getMessage().reply("O uso correto é '!bind <usernameDoMinecraft>'").join();
 			return;
 		}
 		
-		String username = split[0];
+		String username = split[1];
 		
 		if (username.isEmpty()) {
 			event.getMessage().reply("O uso correto é '!bind <usernaameDoMinecraft>'").join();
@@ -54,18 +59,13 @@ public class BindCommand implements MessageCreateListener {
 		
 		PlayerAccount account = Caches.USER_CACHE.findByDiscordId("" + member.getId());
 		
-		if (account == null) {
-			event.getMessage().reply("Não foi possível encontrar o usuário no banco de dados. Por favor, verifique se o nome do usuário está correto.").join();
-			return;
-		}
-		
-		if (account.getProperties().isDiscordSynchronized() || account.getDiscordId() != null) {
+		if (account != null) {
 			event.getMessage().reply("Este usuário já está vinculado ao Discord.").join();
 			return;
 		}
 		
 		String authCode = AuthCodeGenerator.create();
-		PlayerAuthMapper.setAuthCode(username, authCode);
+		PlayerAuthMapper.setAuthCode(username, authCode, "" + authorId);
 		
 		EmbedBuilder embedBuilder = new EmbedBuilder();
 		embedBuilder.setColor(Color.MAGENTA);

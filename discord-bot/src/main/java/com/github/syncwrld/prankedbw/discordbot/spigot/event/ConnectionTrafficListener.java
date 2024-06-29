@@ -13,16 +13,20 @@ public class ConnectionTrafficListener implements Listener {
 	
 	@EventHandler
 	public void whenConnectionStart(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
-		RankedRepository rankedRepository = Repositories.RANKED_REPOSITORY;
-		
-		PlayerAccount account = rankedRepository.findByMCNickname(player.getName());
-		
-		if (account == null) {
-			account = rankedRepository.createAccount(player);
+		try {
+			Player player = event.getPlayer();
+			RankedRepository rankedRepository = Repositories.RANKED_REPOSITORY;
+
+			PlayerAccount account = rankedRepository.findByMCNickname(player.getName());
+
+			if (account == null) {
+				account = rankedRepository.createAccount(player);
+			}
+
+			Caches.USER_CACHE.add(account);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
-		Caches.USER_CACHE.add(account);
 	}
 	
 }

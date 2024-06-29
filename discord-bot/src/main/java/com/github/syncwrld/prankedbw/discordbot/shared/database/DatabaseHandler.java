@@ -4,6 +4,7 @@ import me.syncwrld.booter.database.connector.SimpleBukkitDatabaseConnector;
 import me.syncwrld.booter.database.connector.SimpleDatabaseConnector;
 import me.syncwrld.booter.database.connector.sample.DatabaseType;
 import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
+import me.syncwrld.booter.minecraft.tool.Pair;
 
 import java.sql.Connection;
 
@@ -21,11 +22,11 @@ public class DatabaseHandler {
 		}
 	}
 	
-	public static Connection getConnection(BukkitPlugin plugin) {
+	public static Pair<Connection, DatabaseType> createAndConnect(BukkitPlugin plugin) {
 		SimpleDatabaseConnector databaseConnector = SimpleBukkitDatabaseConnector.construct(plugin, plugin.getConfigOf("configuration.yml"));
 		if (!databaseConnector.connect()) {
 			throw new RuntimeException("Failed to connect to database | plugin.name = " + plugin.getName());
 		}
-		return databaseConnector.getConnection();
+		return new Pair<>(databaseConnector.getConnection(), getDatabaseType(databaseConnector.getDatabaseType()));
 	}
 }

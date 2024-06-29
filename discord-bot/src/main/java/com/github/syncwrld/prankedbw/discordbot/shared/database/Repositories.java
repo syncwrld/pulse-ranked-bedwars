@@ -2,6 +2,8 @@ package com.github.syncwrld.prankedbw.discordbot.shared.database;
 
 import com.github.syncwrld.prankedbw.discordbot.shared.database.impl.RankedRepository;
 import com.github.syncwrld.prankedbw.discordbot.spigot.PRankedSpigotPlugin;
+import me.syncwrld.booter.database.connector.sample.DatabaseType;
+import me.syncwrld.booter.minecraft.tool.Pair;
 
 import java.sql.Connection;
 
@@ -9,8 +11,10 @@ public class Repositories {
 	public static RankedRepository RANKED_REPOSITORY;
 	
 	public static void setup(PRankedSpigotPlugin plugin) {
-		Connection connection = DatabaseHandler.getConnection(plugin);
-		RANKED_REPOSITORY = new RankedRepository(connection);
+		Pair<Connection, DatabaseType> connResult = DatabaseHandler.createAndConnect(plugin);
+		Connection connection = connResult.getKey();
+		
+		RANKED_REPOSITORY = new RankedRepository(connection, connResult.getValue());
 		RANKED_REPOSITORY.createTables();
 	}
 }

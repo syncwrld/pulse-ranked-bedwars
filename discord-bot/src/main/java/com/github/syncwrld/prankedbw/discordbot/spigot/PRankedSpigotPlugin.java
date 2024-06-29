@@ -34,10 +34,10 @@ public class PRankedSpigotPlugin extends BukkitPlugin {
 			return;
 		}
 		
-		this.registerListeners(new AuthCodeInputListener(), new ConnectionTrafficListener());
-		
 		this.bootstrapper = new PRankedRobotBootstrapper(this);
 		this.bootstrapper.enable();
+		
+		this.registerListeners(new AuthCodeInputListener(), new ConnectionTrafficListener());
 	}
 	
 	@Override

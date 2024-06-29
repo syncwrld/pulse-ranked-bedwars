@@ -37,7 +37,7 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 		final String token = this.plugin.getConfiguration().getString("discord-bot-token");
 		
 		if (token == null || token.isEmpty()) {
-			this.plugin.log("§7Defina o token do bot no arquivo de configuração. O plugin será desabilitado.");
+			this.plugin.log("Defina o token do bot no arquivo de configuração. O plugin será desabilitado.");
 			this.plugin.getServer().getPluginManager().disablePlugin(this.plugin);
 			return;
 		}
@@ -56,7 +56,11 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 	
 	@Override
 	public void disable() {
-	
+		if (this.client != null) {
+			this.client.disconnect();
+		}
+		
+		Caches.save();
 	}
 	
 	public void handleReady() {

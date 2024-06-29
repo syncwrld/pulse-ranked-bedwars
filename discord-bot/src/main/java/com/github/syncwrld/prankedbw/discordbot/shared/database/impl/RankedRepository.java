@@ -6,6 +6,8 @@ import com.github.syncwrld.prankedbw.discordbot.shared.model.data.PlayerProperti
 import me.syncwrld.booter.database.DatabaseHelper;
 import me.syncwrld.booter.database.IdentifiableRepository;
 import me.syncwrld.booter.database.TableComponent;
+import me.syncwrld.booter.database.connector.sample.DatabaseType;
+import me.syncwrld.booter.database.util.Async;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
@@ -18,9 +20,11 @@ import java.util.Map;
 
 public class RankedRepository implements IdentifiableRepository, DatabaseHelper {
 	private final Connection connection;
+	private final DatabaseType databaseType;
 	
-	public RankedRepository(Connection connection) {
+	public RankedRepository(Connection connection, DatabaseType databaseType) {
 		this.connection = connection;
+		this.databaseType = databaseType;
 	}
 	
 	@Override
@@ -39,19 +43,26 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	}
 	
 	public PlayerAccount createAccount(Player player) {
-		PlayerProperties properties = new PlayerProperties(0, false, null);
+		PlayerProperties properties = new PlayerProperties(0, false, "");
 		
-		this.insert(this.getName(), this.connection, (String) null, player.getName(), SharedConstants.GSON.toJson(properties));
+		String query = this.databaseType == DatabaseType.MYSQL ? "insert ignore into " + this.getName() + " values (?, ?, ?)" : "insert or ignore into " + this.getName() + " values (?, ?, ?)";
+		
+		try (PreparedStatement statement = this.prepare(this.connection, query)) {
+			statement.setString(1, player.getName());
+			statement.setString(2, SharedConstants.GSON.toJson(properties));
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 		
 		return new PlayerAccount(player.getName(), null, properties);
 	}
 	
 	public PlayerAccount findByMCNickname(String username) {
-		String query = "select * from ? where username = ?";
+		String query = "select * from " + this.getName() + " where username = ?";
 		
 		try (PreparedStatement statement = this.prepare(this.connection, query)) {
-			statement.setString(1, this.getName());
-			statement.setString(2, username);
+			statement.setString(1, username);
 			
 			try (ResultSet resultSet = result(statement)) {
 				if (resultSet.next()) {
@@ -66,7 +77,7 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	}
 	
 	public PlayerAccount findByDiscordId(String discordId) {
-		String query = "select * from ? where discord_id = ?";
+		String query = "select * from " + this.getName() + " where discord_id = ?";
 		
 		try (PreparedStatement statement = this.prepare(this.connection, query)) {
 			statement.setString(1, this.getName());
@@ -85,13 +96,12 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	}
 	
 	public void updateAccount(PlayerAccount account) {
-		String query = "replace into ? values (?, ?, ?)";
+		String query = "replace into " + this.getName() + " values (?, ?, ?)";
 		
-		try (PreparedStatement statement = this.prepare(this.connection, query)) {
-			statement.setString(1, this.getName());
-			statement.setString(2, account.getUsername());
-			statement.setString(3, account.getDiscordId());
-			statement.setString(4, SharedConstants.GSON.toJson(account.getProperties()));
+		try (PreparedStatement statement = this.prepare(this.connection, query)) {;
+			statement.setString(1, account.getUsername());
+			statement.setString(2, account.getDiscordId());
+			statement.setString(3, SharedConstants.GSON.toJson(account.getProperties()));
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -99,11 +109,10 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	}
 	
 	public void deleteAccount(String username) {
-		String query = "delete from ? where username = ?";
+		String query = "delete from " + this.getName() + " where username = ?";
 		
 		try (PreparedStatement statement = this.prepare(this.connection, query)) {
-			statement.setString(1, this.getName());
-			statement.setString(2, username);
+			statement.setString(1, username);
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -111,12 +120,11 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	}
 	
 	public void bindDiscord(String discordId, String username) {
-		String query = "replace into ? values (?, ?)";
+		String query = "replace into " + this.getName() + " values (?, ?)";
 		
-		try (PreparedStatement statement = this.prepare(this.connection, query)) {
-			statement.setString(1, this.getName());
-			statement.setString(2, discordId);
-			statement.setString(3, username);
+		try (PreparedStatement statement = this.prepare(this.connection, query)) {\
+			statement.setString(1, discordId);
+			statement.setString(2, username);
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -126,14 +134,13 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	public HashSet<PlayerAccount> fetchAll() {
 		String query = "select * from " + this.getName();
 		
-		try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-			try (ResultSet resultSet = statement.executeQuery()) {
+		try (PreparedStatement statement = this.prepare(this.connection, query)) {
+			try (ResultSet resultSet = result(statement)) {
 				HashSet<PlayerAccount> accounts = new HashSet<>(resultSet.getFetchSize());
 				
 				while (resultSet.next()) {
 					accounts.add(new PlayerAccount(resultSet.getString("username"), resultSet.getString("discord_id"), SharedConstants.GSON.fromJson(resultSet.getString("properties"), PlayerProperties.class)));
 				}
-				
 				return accounts;
 			}
 		} catch (SQLException | NullPointerException e) {
