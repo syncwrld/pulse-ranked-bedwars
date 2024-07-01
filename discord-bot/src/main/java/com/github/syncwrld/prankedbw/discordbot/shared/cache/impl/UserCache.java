@@ -1,6 +1,7 @@
 package com.github.syncwrld.prankedbw.discordbot.shared.cache.impl;
 
 import com.github.syncwrld.prankedbw.discordbot.shared.model.PlayerAccount;
+import com.github.syncwrld.prankedbw.discordbot.spigot.PRankedSpigotPlugin;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class UserCache {
 	
 	public PlayerAccount findByDiscordId(String discordId) {
 		return this.accounts.stream()
-			.filter(account -> account.getDiscordId().equals(discordId))
+			.filter(account -> account.getDiscordId() != null && account.getDiscordId().equals(discordId))
 			.findFirst().orElse(null);
 	}
 	

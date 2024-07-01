@@ -5,6 +5,7 @@ import me.syncwrld.booter.minecraft.tool.Pair;
 
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerAuthMapper {
 	
@@ -17,7 +18,11 @@ public class PlayerAuthMapper {
 	}
 	
 	public static String getDiscordId(String username) {
-		return discordIds.get(username);
+		return discordIds.entrySet().stream()
+			.filter(entry -> entry.getValue().equals(username))
+			.map(Map.Entry::getKey)
+			.findFirst()
+			.orElse(null);
 	}
 	
 	public static void setAuthCode(String username, String authCode, String discordId) {

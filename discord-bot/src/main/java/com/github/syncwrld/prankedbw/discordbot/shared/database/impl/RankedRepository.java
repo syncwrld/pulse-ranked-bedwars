@@ -7,7 +7,6 @@ import me.syncwrld.booter.database.DatabaseHelper;
 import me.syncwrld.booter.database.IdentifiableRepository;
 import me.syncwrld.booter.database.TableComponent;
 import me.syncwrld.booter.database.connector.sample.DatabaseType;
-import me.syncwrld.booter.database.util.Async;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
@@ -98,7 +97,8 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	public void updateAccount(PlayerAccount account) {
 		String query = "replace into " + this.getName() + " values (?, ?, ?)";
 		
-		try (PreparedStatement statement = this.prepare(this.connection, query)) {;
+		try (PreparedStatement statement = this.prepare(this.connection, query)) {
+			;
 			statement.setString(1, account.getUsername());
 			statement.setString(2, account.getDiscordId());
 			statement.setString(3, SharedConstants.GSON.toJson(account.getProperties()));
@@ -120,11 +120,19 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	}
 	
 	public void bindDiscord(String discordId, String username) {
-		String query = "replace into " + this.getName() + " values (?, ?)";
+		String query = "replace into " + this.getName() + " values (?, ?, ?)";
 		
-		try (PreparedStatement statement = this.prepare(this.connection, query)) {\
-			statement.setString(1, discordId);
-			statement.setString(2, username);
+		PlayerAccount playerAccount = findByMCNickname(username);
+		PlayerProperties properties = playerAccount.getProperties();
+		properties.setDiscordSynchronized(true);
+		properties.setDiscordUsername("waitingSynchronization");
+		
+		try (PreparedStatement statement = this.prepare(this.connection, query)) {
+			statement.setString(1, username);
+			statement.setString(2, discordId);
+			
+			statement.setString(3, SharedConstants.GSON.toJson(properties));
+			
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

@@ -8,7 +8,9 @@ import com.github.syncwrld.prankedbw.discordbot.shared.mapping.labor.PlayerAuthM
 import com.github.syncwrld.prankedbw.discordbot.spigot.PRankedSpigotPlugin;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import me.syncwrld.booter.ApplicationBootstrapper;
+import org.bukkit.Bukkit;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.user.User;
@@ -20,13 +22,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Getter(AccessLevel.PUBLIC)
+@Setter(AccessLevel.PUBLIC)
 public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 	
+	private ScheduledExecutorService scheduler;
 	private final PRankedSpigotPlugin plugin;
 	private DiscordApi client;
 	
 	private String voiceChannelCategoryId;
-	private String guildId;
 	
 	public PRankedRobotBootstrapper(PRankedSpigotPlugin plugin) {
 		this.plugin = plugin;
@@ -50,7 +53,6 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 			throw new RuntimeException(e);
 		}
 		
-		this.guildId = this.plugin.getConfiguration().getString("guild-id");
 		this.voiceChannelCategoryId = this.plugin.getConfiguration().getString("voice-channel-category-id");
 	}
 	
@@ -58,6 +60,10 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 	public void disable() {
 		if (this.client != null) {
 			this.client.disconnect();
+		}
+		
+		if (this.scheduler != null) {
+			this.scheduler.shutdown();
 		}
 		
 		Caches.save();
@@ -83,8 +89,10 @@ public class PRankedRobotBootstrapper implements ApplicationBootstrapper {
 		/*
 		Inicializando as tarefas constantes (trabalhos)
 		 */
-		createScheduler().scheduleAtFixedRate(new MatchAvailabilityLabor(this), 0, 3, TimeUnit.SECONDS);
-		createScheduler().scheduleAtFixedRate(new PlayerAuthMapperLabor(), 0, 3, TimeUnit.SECONDS);
+		this.scheduler = createScheduler();
+		
+		Bukkit.getScheduler().runTaskTimer(this.plugin, new MatchAvailabilityLabor(this), 0, 60);
+		Bukkit.getScheduler().runTaskTimer(this.plugin, new PlayerAuthMapperLabor(), 0, 60);
 		
 		/*
 		Registrando ouvintes de eventos
