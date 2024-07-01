@@ -72,7 +72,7 @@ public class MatchAvailabilityLabor implements Runnable {
 		
 		int randoMatchID = ThreadLocalRandom.current().nextInt(0, 999999999);
 		this.server = optionalServer.get();
-		Pair<ServerVoiceChannel, ServerVoiceChannel> voiceChannelsAndMovePlayers = createVoiceChannelsAndMovePlayers(randoMatchID, server1, teamOne, teamTwo);
+		Pair<ServerVoiceChannel, ServerVoiceChannel> voiceChannelsAndMovePlayers = createVoiceChannelsAndMovePlayers(randoMatchID, server, teamOne, teamTwo);
 		
 		callMatchmakingDoneEvent(randoMatchID, teamOne, teamTwo, voiceChannelsAndMovePlayers.getKey(), voiceChannelsAndMovePlayers.getValue());
 	}

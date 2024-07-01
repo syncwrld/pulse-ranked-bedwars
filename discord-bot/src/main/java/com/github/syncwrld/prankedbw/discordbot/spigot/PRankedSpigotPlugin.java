@@ -37,7 +37,7 @@ public class PRankedSpigotPlugin extends BukkitPlugin {
 		this.bootstrapper = new PRankedRobotBootstrapper(this);
 		this.bootstrapper.enable();
 		
-		this.registerListeners(new AuthCodeInputListener(), new ConnectionTrafficListener());
+		this.registerListeners(new AuthCodeInputListener(bootstrapper), new ConnectionTrafficListener());
 	}
 	
 	@Override

@@ -64,6 +64,11 @@ public class BindCommand implements MessageCreateListener {
 			return;
 		}
 		
+		if (PlayerAuthMapper.isValidating(username)) {
+			event.getMessage().reply("Este usuário já tem um código de autorização pendente.").join();
+			return;
+		}
+		
 		String authCode = AuthCodeGenerator.create();
 		PlayerAuthMapper.setAuthCode(username, authCode, "" + authorId);
 		
