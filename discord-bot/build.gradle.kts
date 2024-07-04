@@ -15,21 +15,16 @@ repositories {
 }
 
 dependencies {
-    /*
-    Just at compile-time
-     */
+    /* Just at compile-time */
     compileOnly("org.projectlombok:lombok:1.18.24")
     compileOnly("org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT")
     compileOnly(files("../artifacts/PackedJC.jar"))
+    compileOnly(files("../artifacts/BedWars-1.1.1.jar"))
 
-    /*
-    At runtime
-     */
-    implementation("com.github.syncwrld:syncBooter:v0.1.4.5")
+    /* At runtime */
+    implementation("com.github.syncwrld:syncBooter:v0.1.4.6")
 
-    /*
-    Annotation processors
-     */
+    /* Annotation processors */
     annotationProcessor("org.projectlombok:lombok:1.18.24")
 }
 
@@ -45,7 +40,7 @@ tasks.withType<JavaCompile> {
 val copyJar by tasks.registering(Copy::class) {
     dependsOn(tasks.withType<ShadowJar>())
     from(tasks.shadowJar.get().archiveFile)
-    into("../artifacts")
+    into("C:/Users/isaac/AppData/Roaming/.feather/player-server/servers/5a5f59f8-35d1-4650-b9d0-9b388c5144dc/plugins")
     rename { "PRanked - 4s Bot.jar" }
 }
 

@@ -11,9 +11,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="discord-bot" target="1.8" />
-      <module name="discord-bot.main" target="1.8" />
-      <module name="discord-bot.test" target="1.8" />
+      <module name="discord-bot" target="11" />
+      <module name="discord-bot.main" target="11" />
+      <module name="discord-bot.test" target="11" />
       <module name="spigot-d4j" target="1.8" />
       <module name="spigot-d4j.main" target="1.8" />
       <module name="spigot-d4j.test" target="1.8" />

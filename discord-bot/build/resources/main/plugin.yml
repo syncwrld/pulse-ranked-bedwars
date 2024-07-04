@@ -4,4 +4,5 @@ version: 1.0
 api-version: 1.13
 authors: [ syncwrld ]
 
+depend: [ BedWars2023 ]
 softdepend: [ PackedJC ]

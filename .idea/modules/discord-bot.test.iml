@@ -7,7 +7,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="discord-bot.main" />
-    <orderEntry type="library" name="Gradle: com.github.syncwrld:syncBooter:v0.1.4.5" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.syncwrld:syncBooter:v0.1.4.6" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="discord-bot.main" />
 </module>

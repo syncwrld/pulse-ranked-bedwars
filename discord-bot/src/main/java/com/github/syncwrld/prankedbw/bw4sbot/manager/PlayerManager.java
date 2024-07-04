@@ -1,0 +1,42 @@
+package com.github.syncwrld.prankedbw.bw4sbot.manager;
+
+import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
+import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.AccountCache;
+import org.javacord.api.entity.user.User;
+
+import java.util.Set;
+import java.util.function.Predicate;
+
+public class PlayerManager {
+	private final PRankedSpigotPlugin plugin;
+	
+	public PlayerManager(PRankedSpigotPlugin plugin) {
+		this.plugin = plugin;
+	}
+	
+	public boolean isOnlineInGame(String discordUsername) {
+		AccountCache accountCache = this.plugin.getCaches().getAccountCache();
+		String minecraftUsername = accountCache.getMinecraftUsername(discordUsername);
+		
+		return minecraftUsername != null && this.plugin.getServer().getPlayer(minecraftUsername) != null;
+	}
+	
+	public int howManyAreBind(Set<User> users) {
+		AccountCache accountCache = plugin.getCaches().getAccountCache();
+		Predicate<User> hasAccount = user -> accountCache.hasAccount(user.getName());
+		
+		return (int) users.stream()
+			.filter(hasAccount)
+			.count();
+	}
+	
+	public int howManyAreBindAndInGame(Set<User> users) {
+		return howManyAreBind(users) + howManyAreInGame(users);
+	}
+	
+	private int howManyAreInGame(Set<User> users) {
+		return (int) users.stream()
+			.filter(user -> isOnlineInGame(user.getName()))
+			.count();
+	}
+}

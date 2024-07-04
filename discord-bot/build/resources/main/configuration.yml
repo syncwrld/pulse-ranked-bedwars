@@ -27,3 +27,7 @@ voice-channel-category-id: ''
 
 # Mensagem de status do bot #
 bot-status-message: 'Esperando por uma nova partida!'
+
+# IDs das arenas que serão usadas em partidas 4s #
+arena-ids:
+  - 'bw4s1'

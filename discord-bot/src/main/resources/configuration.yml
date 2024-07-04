@@ -25,5 +25,12 @@ wait-channel-id: ''
 # A categoria em que as salas de voz serão criadas #
 voice-channel-category-id: ''
 
+# Cargo que será dado aos jogadores vinculados #
+registered-role-id: ''
+
 # Mensagem de status do bot #
 bot-status-message: 'Esperando por uma nova partida!'
+
+# IDs das arenas que serão usadas em partidas 4s #
+arena-ids:
+  - 'bw4s1'

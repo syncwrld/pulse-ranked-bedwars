@@ -31,8 +31,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../artifacts/BedWars-1.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.projectlombok:lombok:1.18.24" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Gradle: com.github.syncwrld:syncBooter:v0.1.4.5" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.syncwrld:syncBooter:v0.1.4.6" level="project" />
   </component>
 </module>
