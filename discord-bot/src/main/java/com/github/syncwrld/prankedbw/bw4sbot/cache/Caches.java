@@ -27,6 +27,12 @@ public class Caches {
 		tokenCache.clear();
 		matchesCache.getMatches().clear();
 		
+		accountCache.setup(plugin);
+		
 		plugin.startRepeatingRunnable(tokenCache, 100);
+	}
+	
+	public void save() {
+		accountCache.save();
 	}
 }

@@ -7,15 +7,20 @@ import com.github.syncwrld.prankedbw.bw4sbot.event.bukkit.game.MatchListener;
 import com.github.syncwrld.prankedbw.bw4sbot.event.bukkit.game.TeamFormationListener;
 import com.github.syncwrld.prankedbw.bw4sbot.event.javacord.BindCommandListener;
 import com.github.syncwrld.prankedbw.bw4sbot.model.config.RobotConfiguration;
+import com.github.syncwrld.prankedbw.bw4sbot.task.MatchAvailabilityLabor;
 import com.google.common.base.Strings;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.syncwrld.booter.ApplicationBootstrapper;
+import org.bukkit.Bukkit;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.interaction.SlashCommand;
 import org.javacord.api.interaction.SlashCommandOption;
 import org.javacord.api.util.logging.FallbackLoggerConfiguration;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Getter(AccessLevel.PUBLIC)
 public class PRankedJavacordRobot implements ApplicationBootstrapper {
@@ -52,13 +57,13 @@ public class PRankedJavacordRobot implements ApplicationBootstrapper {
 		String botToken = this.plugin.getConfiguration().getString("discord-bot-token");
 		
 		if (Strings.isNullOrEmpty(botToken)) {
-			this.plugin.log("&eDISCORD! Falta o token do bot no arquivo de configuração. Desabilitando.");
+			this.plugin.log("&bDISCORD! Falta o token do bot no arquivo de configuração. Desabilitando.");
 			this.disablePlugin();
 			return;
 		}
 		
-		this.plugin.log("&aDISCORD! Bot iniciado com sucesso.");
-		this.plugin.log("&aDISCORD! Carregando sistemas...");
+		this.plugin.log("&bDISCORD! &fBot iniciado com sucesso.");
+		this.plugin.log("&bGERAL! &fCarregando sistemas...");
 		
 		/*
 		Registrando eventos (Bukkit)
@@ -71,12 +76,15 @@ public class PRankedJavacordRobot implements ApplicationBootstrapper {
 		);
 		
 		this.api = new DiscordApiBuilder().setAllIntents().setToken(botToken).login().join();
+		Bukkit.getScheduler().runTaskTimer(this.plugin, new MatchAvailabilityLabor(this), 0, 20);
 		
 		/*
 		Criando o comando /bind no Discord
 		 */
 		SlashCommand bindCommand = SlashCommand.with(Configuration.BIND_COMMAND, Configuration.BIND_COMMAND_DESCRIPTION).addOption(SlashCommandOption.createStringOption("Nickname", "Seu nickname do Minecraft", true, false)).createGlobal(this.api).join();
 		this.api.addSlashCommandCreateListener(new BindCommandListener(this.plugin));
+		
+		this.plugin.log("&bGERAL! &fCarregamento concluido com sucesso.");
 	}
 	
 	@Override

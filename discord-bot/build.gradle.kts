@@ -40,7 +40,8 @@ tasks.withType<JavaCompile> {
 val copyJar by tasks.registering(Copy::class) {
     dependsOn(tasks.withType<ShadowJar>())
     from(tasks.shadowJar.get().archiveFile)
-    into("C:/Users/isaac/AppData/Roaming/.feather/player-server/servers/5a5f59f8-35d1-4650-b9d0-9b388c5144dc/plugins")
+    // into("C:/Users/isaac/AppData/Roaming/.feather/player-server/servers/5a5f59f8-35d1-4650-b9d0-9b388c5144dc/plugins")
+    into("../artifacts/")
     rename { "PRanked - 4s Bot.jar" }
 }
 

@@ -4,6 +4,7 @@ import com.github.syncwrld.prankedbw.bw4sbot.Configuration;
 import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
 import com.github.syncwrld.prankedbw.bw4sbot.api.event.MatchAvailableEvent;
 import com.github.syncwrld.prankedbw.bw4sbot.api.event.TeamsAvailableEvent;
+import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.AccountCache;
 import com.github.syncwrld.prankedbw.bw4sbot.manager.PlayerManager;
 import com.github.syncwrld.prankedbw.bw4sbot.model.config.RobotConfiguration;
 import com.github.syncwrld.prankedbw.bw4sbot.model.game.Match;
@@ -64,6 +65,10 @@ public class TeamFormationListener implements Listener {
 		ServerVoiceChannel t1_channel = createVoiceChannel(randomChannelId, users);
 		ServerVoiceChannel t2_channel = createVoiceChannel(randomChannelId, users);
 		
+		if (t1_channel == null || t2_channel == null) {
+			return;
+		}
+		
 		Team team1 = new Team(u1, t1, t1_channel);
 		Team team2 = new Team(u2, t2, t2_channel);
 		
@@ -84,8 +89,6 @@ public class TeamFormationListener implements Listener {
 		Set<Player> players = playerManager.getPlayers(users);
 		int teamSize = Configuration.PLAYERS_PER_TEAM;
 		
-		Map<User, Player> userMap = new HashMap<>();
-		
 		// Converte o Set<Player> para uma List<Player> e embaralha a lista
 		List<Player> allPlayers = new ArrayList<>(players);
 		Collections.shuffle(allPlayers, ThreadLocalRandom.current());
@@ -96,23 +99,29 @@ public class TeamFormationListener implements Listener {
 		List<User> u1 = new ArrayList<>();
 		List<User> u2 = new ArrayList<>();
 		
-		// Itera sobre os jogadores e os distribui nos times, além de preencher o userMap
+		// Itera sobre os jogadores e os distribui nos times
+		AccountCache accountCache = plugin.getCaches().getAccountCache();
+		
 		for (Player player : allPlayers) {
-			// Adiciona o jogador ao primeiro time se não estiver cheio
-			if (t1.size() < teamSize) {
-				t1.add(player);
-				users.stream()
-					.filter(user -> user.getName().equals(player.getName()))
-					.findFirst()
-					.ifPresent(u1::add);
-			}
-			// Adiciona o jogador ao segundo time se não estiver cheio
-			else if (t2.size() < teamSize) {
-				t2.add(player);
-				users.stream()
-					.filter(user -> user.getName().equals(player.getName()))
-					.findFirst()
-					.ifPresent(u2::add);
+			String discordUsername = accountCache.getDiscordUsername(player.getName());
+			
+			if (discordUsername != null) {
+				if (t1.size() < teamSize) {
+					t1.add(player);
+					users.stream()
+						.filter(user -> user.getName().equals(discordUsername))
+						.findFirst()
+						.ifPresent(u1::add);
+				}
+				
+				// Adiciona o jogador ao segundo time se não estiver cheio
+				if (t2.size() < teamSize) {
+					t2.add(player);
+					users.stream()
+						.filter(user -> user.getName().equals(discordUsername))
+						.findFirst()
+						.ifPresent(u2::add);
+				}
 			}
 		}
 		
@@ -132,13 +141,35 @@ public class TeamFormationListener implements Listener {
 		}
 		
 		Server server = category.get().getServer();
+		
+		if (server != null) {
+			List<ServerVoiceChannel> voiceChannelsByName = server.getVoiceChannelsByName(channelName);
+			if (voiceChannelsByName != null && !voiceChannelsByName.isEmpty()) {
+				return null;
+			}
+		}
+		
 		CompletableFuture<ServerVoiceChannel> builderFuture = server.createVoiceChannelBuilder().setCategory(category.get()).setName(channelName).setUserlimit(users.size()).create();
 		
 		builderFuture.thenAccept((channel) -> {
 			Role everyoneRole = server.getEveryoneRole();
+			
 			channel.createUpdater()
 				.addPermissionOverwrite(everyoneRole,
-					new PermissionsBuilder().setDenied(PermissionType.CONNECT).build())
+					new PermissionsBuilder()
+						.setDenied(PermissionType.CONNECT).build())
+				.update().join();
+			
+			channel.createUpdater()
+				.addPermissionOverwrite(everyoneRole,
+					new PermissionsBuilder()
+						.setDenied(PermissionType.SPEAK).build())
+				.update().join();
+			
+			channel.createUpdater()
+				.addPermissionOverwrite(everyoneRole,
+					new PermissionsBuilder()
+						.setDenied(PermissionType.VIEW_CHANNEL).build())
 				.update().join();
 			
 			for (User user : users) {

@@ -11,7 +11,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class RankedRepository implements IdentifiableRepository, DatabaseHelper {
 	private final Connection connection;
@@ -154,6 +156,49 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 				);
 			}
 		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public Set<PlayerAccount> getAllAccounts() {
+		/*
+		 * SELECT * FROM 4s_ranked
+		 */
+		
+		String query = "SELECT * FROM " + this.getName();
+		
+		try (PreparedStatement statement = prepare(connection, query)) {
+			try (ResultSet result = statement.executeQuery()) {
+				Set<PlayerAccount> accounts = new HashSet<>();
+				
+				while (result.next()) {
+					accounts.add(new PlayerAccount(
+						result.getString("minecraft_name"),
+						result.getString("username"),
+						Constants.GSON.fromJson(result.getString("properties"), AccountData.class)
+					));
+				}
+				
+				return accounts;
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public void updateAccount(PlayerAccount account) {
+		/*
+		* REPLACE INTO 4s_ranked (minecraft_name, username, properties) VALUES (?, ?, ?)
+		 */
+		
+		String query = "REPLACE INTO " + this.getName() + " (minecraft_name, username, properties) VALUES (?, ?, ?)";
+		
+		try (PreparedStatement statement = prepare(connection, query)) {
+			statement.setString(1, account.getMinecraftName());
+			statement.setString(2, account.getDiscordUsername());
+			statement.setString(3, Constants.GSON.toJson(account.getAccountData()));
+			statement.executeUpdate();
+ 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}

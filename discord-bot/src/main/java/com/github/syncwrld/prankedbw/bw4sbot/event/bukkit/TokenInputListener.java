@@ -1,7 +1,10 @@
 package com.github.syncwrld.prankedbw.bw4sbot.event.bukkit;
 
 import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
+import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.AccountCache;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.TokenCache;
+import com.github.syncwrld.prankedbw.bw4sbot.model.data.AccountData;
+import com.github.syncwrld.prankedbw.bw4sbot.model.data.PlayerAccount;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,7 +33,13 @@ public class TokenInputListener implements Listener {
 		String discordId = tokenCache.getDiscordId(playerName);
 		
 		if (message.equals(expectedToken)) {
-			player.sendMessage("Você foi vinculado com sucesso!");
+			event.setCancelled(true);
+			player.sendMessage("§aVocê foi vinculado com sucesso!");
+			
+			AccountCache accountCache = plugin.getCaches().getAccountCache();
+			PlayerAccount oldAccount = accountCache.getAccount(player);
+			PlayerAccount newAccount = new PlayerAccount(playerName, tokenCache.getDiscordName(playerName), AccountData.create(discordId, oldAccount.getAccountData().getEloPoints()));
+			accountCache.setAccount(player, newAccount);
 			
 			this.plugin.getBootstrapper().getApi()
 				.getUserById(discordId)

@@ -60,6 +60,7 @@ public class PRankedSpigotPlugin extends BukkitPlugin {
 	
 	@Override
 	protected void whenDisable() {
+		this.caches.save();
 		this.bootstrapper.disable();
 	}
 	

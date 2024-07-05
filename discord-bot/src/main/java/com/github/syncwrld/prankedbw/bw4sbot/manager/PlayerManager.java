@@ -2,6 +2,7 @@ package com.github.syncwrld.prankedbw.bw4sbot.manager;
 
 import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.AccountCache;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.javacord.api.entity.user.User;
 
@@ -51,7 +52,9 @@ public class PlayerManager {
 	
 	public Set<Player> getPlayers(Set<User> users) {
 		return users.stream()
-			.map(user -> plugin.getServer().getPlayer(user.getName()))
+			.map(user -> Bukkit.getPlayerExact(
+				plugin.getCaches().getAccountCache().getMinecraftUsername(user.getName())
+			))
 			.filter(Objects::nonNull)
 			.collect(Collectors.toSet());
 	}

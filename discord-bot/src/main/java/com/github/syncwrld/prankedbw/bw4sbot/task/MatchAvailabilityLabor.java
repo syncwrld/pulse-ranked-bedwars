@@ -57,6 +57,9 @@ public class MatchAvailabilityLabor implements Runnable {
 				int bindAmount = this.playerManager.howManyAreBind(playersWithRole);
 				int playersPerTeam = Configuration.PLAYERS_PER_TEAM;
 				
+				this.robot.getPlugin()
+					.log("DEBUG { bindAmount: " + bindAmount + ", playersPerTeam: " + playersPerTeam + ", playersWithRole: " + playersWithRole.size() + " }");
+				
 				/*
 				Se o número de jogadores disponíveis para a partida
 				forem menores que o número necessário para formar
