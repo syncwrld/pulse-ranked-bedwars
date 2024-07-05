@@ -4,6 +4,7 @@ import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.AccountCache;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.TokenCache;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.javacord.api.entity.message.MessageFlag;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
@@ -32,6 +33,7 @@ public class BindCommandListener implements SlashCommandCreateListener {
 					if (accountCache.hasAccount(nickname)) {
 						commandInteraction.createImmediateResponder()
 							.setContent("Esse nickname já está vinculado a uma conta.")
+							.setFlags(MessageFlag.EPHEMERAL)
 							.respond().join();
 						return;
 					}
@@ -41,9 +43,22 @@ public class BindCommandListener implements SlashCommandCreateListener {
 					/*
 					Verificando se o nickname já está aguardando para ser vinculado
 					 */
-					if (tokenCache.isAlreadyWaiting(nickname)) {
+					if (tokenCache.isWaiting(nickname)) {
 						commandInteraction.createImmediateResponder()
 							.setContent("Esse nickname já está aguardando para ser vinculado.")
+							.setFlags(MessageFlag.EPHEMERAL)
+							.respond().join();
+						return;
+					}
+					
+					/*
+					Verificando se o discordId já está aguardando para ser vinculado
+					 */
+					String discordId = "" + commandInteraction.getUser().getId();
+					if (tokenCache.isAlreadyWaitingByDiscordId(discordId)) {
+						commandInteraction.createImmediateResponder()
+							.setContent("Você já está aguardando para ser vinculado.")
+							.setFlags(MessageFlag.EPHEMERAL)
 							.respond().join();
 						return;
 					}
@@ -63,6 +78,7 @@ public class BindCommandListener implements SlashCommandCreateListener {
 					
 					commandInteraction.createImmediateResponder()
 						.setContent("Tudo jóia! Seu código de vinculação será enviado por DM.")
+						.setFlags(MessageFlag.EPHEMERAL)
 						.respond().join();
 					
 					/*
@@ -72,8 +88,9 @@ public class BindCommandListener implements SlashCommandCreateListener {
 						.thenAccept((privateChannel) -> {
 							EmbedBuilder embed = new EmbedBuilder()
 								.setTitle("Ranked 4S - Vinculação")
-								.setDescription("Complete sua vinculação para desbloquear o modo Ranked 4S.")
+								.setDescription("Tudo certo! Agora para completar a vinculação, copie seu código de autorização abaixo e envie no chat do jogo no lobby do Bedwars.")
 								.addField("Código de vinculação", token, false)
+								.setFooter("Seu código de autorização expira em 5 minutos")
 								.setColor(Color.MAGENTA);
 							
 							privateChannel.sendMessage(embed)
@@ -84,6 +101,7 @@ public class BindCommandListener implements SlashCommandCreateListener {
 								.exceptionally((throwable) -> {
 									commandInteraction.createImmediateResponder()
 										.setContent("Ocorreu um erro ao enviar o código de vinculação. Verifique se sua DM está aberta.")
+										.setFlags(MessageFlag.EPHEMERAL)
 										.respond().join();
 									return null;
 								})
@@ -96,6 +114,7 @@ public class BindCommandListener implements SlashCommandCreateListener {
 				() -> {
 					commandInteraction.createImmediateResponder()
 						.setContent("Você precisa informar um nickname.")
+						.setFlags(MessageFlag.EPHEMERAL)
 						.respond().join();
 				}
 			);

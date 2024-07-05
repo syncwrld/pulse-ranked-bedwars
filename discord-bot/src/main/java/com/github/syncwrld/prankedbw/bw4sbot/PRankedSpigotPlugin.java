@@ -5,6 +5,7 @@ import com.github.syncwrld.prankedbw.bw4sbot.hook.BedwarsHook;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
+import org.bukkit.Bukkit;
 
 import java.util.List;
 
@@ -64,6 +65,6 @@ public class PRankedSpigotPlugin extends BukkitPlugin {
 	
 	@Override
 	public void log(String message) {
-		this.getLogger().info(message.replace("&", "§"));
+		Bukkit.getConsoleSender().sendMessage("§b[Ranked4S-BOT] " + message.replace("&", "§"));
 	}
 }

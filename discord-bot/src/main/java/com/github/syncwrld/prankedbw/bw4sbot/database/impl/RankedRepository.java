@@ -22,7 +22,7 @@ public class RankedRepository implements IdentifiableRepository, DatabaseHelper 
 	
 	@Override
 	public String getName() {
-		return "4s_ranked";
+		return "ranked4s";
 	}
 	
 	@Override

@@ -12,7 +12,7 @@ public class TokenCache implements Runnable {
 	K = nome do jogador que será vinculado (mc)
 	V = Pair<Pair<discord_id, discord_name, token>, Tempo de expiração>
 	 */
-	private HashMap<String, Pair<Triple<String, String, String>, Instant>> tokens = new HashMap<>();
+	private final HashMap<String, Pair<Triple<String, String, String>, Instant>> tokens = new HashMap<>();
 	
 	public String getToken(String minecraftName) {
 		return tokens.get(minecraftName).getKey().getValue2();
@@ -25,6 +25,14 @@ public class TokenCache implements Runnable {
 		));
 	}
 	
+	public String getDiscordId(String minecraftName) {
+		return tokens.get(minecraftName).getKey().getKey();
+	}
+	
+	public String getDiscordName(String minecraftName) {
+		return tokens.get(minecraftName).getKey().getValue();
+	}
+	
 	public void removeToken(String minecraftName) {
 		tokens.remove(minecraftName);
 	}
@@ -33,8 +41,13 @@ public class TokenCache implements Runnable {
 		tokens.clear();
 	}
 	
-	public boolean isAlreadyWaiting(String minecraftName) {
+	public boolean isWaiting(String minecraftName) {
 		return tokens.containsKey(minecraftName);
+	}
+	
+	public boolean isAlreadyWaitingByDiscordId(String discordId) {
+		return tokens.entrySet().stream()
+			.anyMatch(token -> token.getValue().getKey().getKey().equals(discordId));
 	}
 	
 	@Override

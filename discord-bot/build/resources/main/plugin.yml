@@ -1,4 +1,4 @@
-main: com.github.syncwrld.prankedbw.discordbot.spigot.PRankedSpigotPlugin
+main: com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin
 name: PRanked4sBOT
 version: 1.0
 api-version: 1.13
