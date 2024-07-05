@@ -2,10 +2,13 @@ package com.github.syncwrld.prankedbw.bw4sbot.manager;
 
 import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.AccountCache;
+import org.bukkit.entity.Player;
 import org.javacord.api.entity.user.User;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class PlayerManager {
 	private final PRankedSpigotPlugin plugin;
@@ -39,4 +42,18 @@ public class PlayerManager {
 			.filter(user -> isOnlineInGame(user.getName()))
 			.count();
 	}
+	
+	public Set<User> chopToEight(Set<User> users) {
+		return users.stream()
+			.limit(8)
+			.collect(Collectors.toSet());
+	}
+	
+	public Set<Player> getPlayers(Set<User> users) {
+		return users.stream()
+			.map(user -> plugin.getServer().getPlayer(user.getName()))
+			.filter(Objects::nonNull)
+			.collect(Collectors.toSet());
+	}
+	
 }

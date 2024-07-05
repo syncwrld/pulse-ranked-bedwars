@@ -4,12 +4,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.javacord.api.entity.user.User;
 
+import java.util.Set;
+
 public class TeamsAvailableEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
 	
-	private final User[] users;
+	private final Set<User> users;
 	
-	public TeamsAvailableEvent(User[] users) {
+	public TeamsAvailableEvent(Set<User> users) {
 		this.users = users;
 	}
 	
@@ -22,7 +24,7 @@ public class TeamsAvailableEvent extends Event {
 		return handlers;
 	}
 	
-	public User[] getUsers() {
+	public Set<User> getUsers() {
 		return users;
 	}
 }
