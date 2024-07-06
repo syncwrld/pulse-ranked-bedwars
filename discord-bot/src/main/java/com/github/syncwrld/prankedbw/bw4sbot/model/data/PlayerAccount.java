@@ -1,22 +1,31 @@
 package com.github.syncwrld.prankedbw.bw4sbot.model.data;
 
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.entity.Player;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /*
  * Objeto principal que guarda as informações de uma conta do jogador
  */
 public class PlayerAccount implements Serializable {
 	
+	private final UUID minecraftUuid;
+	private final String discordId;
 	private String minecraftName;
 	private String discordUsername;
-	private AccountData accountData;
+	private int eloPoints;
 	
-	public PlayerAccount(String minecraftName, String discordUsername, AccountData accountData) {
+	public PlayerAccount(UUID minecraftUuid, String minecraftName, String discordId, String discordUsername, int eloPoints) {
+		this.minecraftUuid = minecraftUuid;
 		this.minecraftName = minecraftName;
+		this.discordId = discordId;
 		this.discordUsername = discordUsername;
-		this.accountData = accountData;
+		this.eloPoints = eloPoints;
+	}
+	
+	public static PlayerAccount createEmpty(Player player) {
+		return new PlayerAccount(player.getUniqueId(), player.getName(), null, null, 0);
 	}
 	
 	public String getMinecraftName() {
@@ -35,16 +44,19 @@ public class PlayerAccount implements Serializable {
 		this.discordUsername = discordUsername;
 	}
 	
-	public AccountData getAccountData() {
-		return accountData;
+	public UUID getMinecraftUuid() {
+		return minecraftUuid;
 	}
 	
-	public void setAccountData(AccountData accountData) {
-		this.accountData = accountData;
+	public int getEloPoints() {
+		return eloPoints;
 	}
 	
-	public static PlayerAccount createEmpty(String minecraftName) {
-		return new PlayerAccount(minecraftName, null, AccountData.createNull());
+	public void setEloPoints(int eloPoints) {
+		this.eloPoints = eloPoints;
 	}
 	
+	public String getDiscordId() {
+		return discordId;
+	}
 }

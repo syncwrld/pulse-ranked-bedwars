@@ -4,6 +4,7 @@ import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.AccountCache;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.TokenCache;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.MessageFlag;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
@@ -30,7 +31,7 @@ public class BindCommandListener implements SlashCommandCreateListener {
 					/*
 					Verificando se o nickname já está vinculado ao Minecraft
 					 */
-					if (accountCache.hasAccount(nickname)) {
+					if (accountCache.hasAccountByMinecraftName(nickname)) {
 						commandInteraction.createImmediateResponder()
 							.setContent("Esse nickname já está vinculado a uma conta.")
 							.setFlags(MessageFlag.EPHEMERAL)

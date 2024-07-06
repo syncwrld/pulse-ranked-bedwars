@@ -1,15 +1,14 @@
 package com.github.syncwrld.prankedbw.bw4sbot.model.game;
 
-import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
+import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.user.User;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class Team {
 	private final List<User> users;
@@ -34,26 +33,40 @@ public class Team {
 		return voiceChannel;
 	}
 	
-	public void moveAllToChannel() {
-		PRankedSpigotPlugin plugin = JavaPlugin.getPlugin(PRankedSpigotPlugin.class);
-		Bukkit.getScheduler().runTaskTimer(plugin, new BukkitRunnable() {
-			private final Iterator<User> userIterator = users.iterator();
-			
+	public void moveAllToChannel(BukkitPlugin plugin) {
+		if (users == null || users.isEmpty()) {
+			plugin.log("&cNenhum usuário disponível para mover para o canal de voz.");
+			return;
+		}
+		
+		if (voiceChannel == null) {
+			plugin.log("&cCanal de voz não especificado.");
+			return;
+		}
+		
+		CompletableFuture<Void> allMoves = CompletableFuture.allOf(
+			users.stream()
+				.map(user -> user.move(voiceChannel)
+					.exceptionally(throwable -> {
+						plugin.log("&cUm erro ocorreu ao mover o usuário para o canal de voz: " + user.getName());
+						throwable.printStackTrace();
+						return null;
+					})
+				)
+				.toArray(CompletableFuture[]::new)
+		);
+		
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> new Runnable() {
 			@Override
 			public void run() {
-				if (userIterator.hasNext()) {
-					User user = userIterator.next();
-					user.move(voiceChannel)
-						.exceptionally(e -> {
-							plugin.log("&cUm erro ocorreu ao mover o usuário para o canal de voz. Por favor, verifique suas configurações. E = <" + e.getMessage() + ">");
-							return null;
-						})
-						.join();
-				} else {
-					this.cancel();
+				try {
+					allMoves.join();
+				} catch (Exception e) {
+					plugin.log("&cErro ao mover usuários para o canal de voz.");
+					e.printStackTrace();
 				}
 			}
-		}, 0L, 3L);
+		});
 	}
 	
 	public List<User> getUsers() {

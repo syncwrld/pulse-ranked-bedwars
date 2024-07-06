@@ -2,6 +2,8 @@ package com.github.syncwrld.prankedbw.bw4sbot;
 
 import com.github.syncwrld.prankedbw.bw4sbot.cache.Caches;
 import com.github.syncwrld.prankedbw.bw4sbot.hook.BedwarsHook;
+import com.github.syncwrld.prankedbw.bw4sbot.manager.GameManager;
+import com.github.syncwrld.prankedbw.bw4sbot.model.config.PreferenceConfiguration;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
@@ -13,9 +15,10 @@ import java.util.List;
 public class PRankedSpigotPlugin extends BukkitPlugin {
 	
 	private final Caches caches = new Caches();
+	private PreferenceConfiguration preferenceConfiguration;
 	private PRankedJavacordRobot bootstrapper;
 	private BedwarsHook bedwars;
-	private List<String> arenaIds;
+	private GameManager gameManager;
 	
 	@Override
 	protected void whenLoad() {
@@ -51,8 +54,12 @@ public class PRankedSpigotPlugin extends BukkitPlugin {
 			return;
 		}
 		
-		this.arenaIds = this.getConfiguration().getStringList("arena-ids");
+		this.preferenceConfiguration = new PreferenceConfiguration(this.getConfiguration().getString("arena-group"));
+		
 		this.bedwars = new BedwarsHook(this);
+		this.gameManager = new GameManager(this);
+		
+		this.registerListener(this.gameManager);
 		
 		this.bootstrapper = new PRankedJavacordRobot(this);
 		this.bootstrapper.enable();

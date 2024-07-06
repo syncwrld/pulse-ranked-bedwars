@@ -3,8 +3,11 @@ package com.github.syncwrld.prankedbw.bw4sbot.task;
 import com.github.syncwrld.prankedbw.bw4sbot.Configuration;
 import com.github.syncwrld.prankedbw.bw4sbot.PRankedJavacordRobot;
 import com.github.syncwrld.prankedbw.bw4sbot.api.event.TeamsAvailableEvent;
+import com.github.syncwrld.prankedbw.bw4sbot.manager.GameManager;
 import com.github.syncwrld.prankedbw.bw4sbot.manager.PlayerManager;
 import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
@@ -18,12 +21,14 @@ import java.util.stream.Collectors;
 public class MatchAvailabilityLabor implements Runnable {
 	private final PRankedJavacordRobot robot;
 	private final PlayerManager playerManager;
+	private final GameManager gameManager;
 	
 	private final ArrayList<User> alreadySentWarning = new ArrayList<>();
 	
 	public MatchAvailabilityLabor(PRankedJavacordRobot robot) {
 		this.robot = robot;
 		this.playerManager = new PlayerManager(this.robot.getPlugin());
+		this.gameManager = this.robot.getPlugin().getGameManager();
 	}
 	
 	@Override
@@ -50,6 +55,7 @@ public class MatchAvailabilityLabor implements Runnable {
 				}
 				
 				Set<User> connectedUsers = serverVoiceChannel.getConnectedUsers();
+				Set<Player> availablePlayers = playerManager.getAvailablePlayers(robot.getPlugin(), connectedUsers);
 				Role registeredRole = roleById.get();
 				
 				Set<User> playersWithRole = filterUserWithRole(connectedUsers, serverVoiceChannel.getServer(), registeredRole);
@@ -57,15 +63,16 @@ public class MatchAvailabilityLabor implements Runnable {
 				int bindAmount = this.playerManager.howManyAreBind(playersWithRole);
 				int playersPerTeam = Configuration.PLAYERS_PER_TEAM;
 				
-				this.robot.getPlugin()
-					.log("DEBUG { bindAmount: " + bindAmount + ", playersPerTeam: " + playersPerTeam + ", playersWithRole: " + playersWithRole.size() + " }");
-				
-				/*
-				Se o número de jogadores disponíveis para a partida
-				forem menores que o número necessário para formar
-				2 times completos
-				 */
+                /*
+                Se o número de jogadores disponíveis para a partida
+                forem menores que o número necessário para formar
+                2 times completos
+                 */
 				if ((bindAmount / 2) < playersPerTeam) {
+					return;
+				}
+				
+				if ((availablePlayers.size() / 2) < playersPerTeam) {
 					return;
 				}
 				
@@ -76,7 +83,7 @@ public class MatchAvailabilityLabor implements Runnable {
 							
 							user.openPrivateChannel()
 								.thenAccept(channel -> {
-									channel.sendMessage("Você está aguardando uma partida, porém não está vinculado, você não será incluso em nenhum jogo. Vincule-se usando o comando /bind no servidor do Discord.")
+									channel.sendMessage("Você está aguardando uma partida, porém não online dentro do jogo, você não será incluso em nenhum jogo. Entre no servidor do Minecraft e fique na chamada.")
 										.exceptionally(ignored_ -> null)
 										.join();
 								})
@@ -86,8 +93,16 @@ public class MatchAvailabilityLabor implements Runnable {
 					}
 				});
 				
+				if (playersWithRole.isEmpty()) {
+					return;
+				}
+				
 				TeamsAvailableEvent event = new TeamsAvailableEvent(playersWithRole);
-				BukkitPlugin.callEvent(event);
+				
+				// Execute the event call on the main server thread
+				Bukkit.getScheduler().runTask(this.robot.getPlugin(), () -> {
+					BukkitPlugin.callEvent(event);
+				});
 			}, () -> {
 				this.robot.getPlugin().log("&cO canal com o id informado não foi encontrado. Desabilitando...");
 				this.robot.disablePlugin();

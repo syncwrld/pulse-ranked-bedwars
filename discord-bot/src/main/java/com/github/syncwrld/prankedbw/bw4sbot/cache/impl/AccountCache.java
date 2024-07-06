@@ -8,54 +8,84 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AccountCache {
 	
-	private final HashMap<Player, PlayerAccount> accounts = new HashMap<>();
+	private final HashSet<PlayerAccount> accounts = new HashSet<>();
+	private final HashMap<Player, PlayerAccount> accountMap = new HashMap<>();
 	
 	public PlayerAccount getAccount(Player player) {
-		return accounts.get(player);
+		return accountMap.get(player);
 	}
 	
 	public void setAccount(Player player, PlayerAccount account) {
-		accounts.put(player, account);
+		accountMap.put(player, account);
+		accounts.add(account);
 	}
 	
 	public void removeAccount(Player player) {
-		accounts.remove(player);
+		accountMap.remove(player);
+		accounts.remove(accountMap.get(player));
 	}
 	
 	public boolean hasAccount(Player player) {
-		return accounts.containsKey(player);
+		return accountMap.containsKey(player);
 	}
 	
-	public boolean hasAccount(String discordUsername) {
-		return !getMinecraftUsername(discordUsername).equals("bw4sinvalidname");
+	public boolean hasAccountById(String discordId) {
+		return accounts.stream()
+			.anyMatch(account -> account.getDiscordId() != null && account.getDiscordId().equals(discordId));
 	}
 	
-	public void clear() {
-		accounts.clear();
+	public boolean hasAccountByName(String discordUsername) {
+		String minecraftUsernameById = getMinecraftUsername(discordUsername);
+		System.out.println(minecraftUsernameById);
+		
+		return minecraftUsernameById != null && !minecraftUsernameById.equals("bw4sinvalidname");
 	}
 	
-	public String getMinecraftUsername(String discordUsername) {
-		return accounts.entrySet().stream()
-			.filter(entry -> entry.getValue().getDiscordUsername() != null && entry.getValue().getDiscordUsername().equals(discordUsername))
-			.map(entry -> entry.getKey().getName())
+	public String getMinecraftUsernameById(String discordId) {
+		return this.accountMap.entrySet().stream()
+			.filter(entry -> entry.getValue().getDiscordId() != null && entry.getValue().getDiscordId().equals(discordId))
+			.map(entry -> entry.getKey() == null ? "bw4sinvalidname" : entry.getValue().getMinecraftName())
 			.findFirst()
 			.orElse("bw4sinvalidname");
 	}
 	
+	public void clear() {
+		accounts.clear();
+		accountMap.clear();
+	}
+	
+	public String getMinecraftUsername(String discordUsername) {
+		return accounts.stream()
+			.filter(account -> discordUsername.equals(account.getDiscordUsername()))
+			.map(PlayerAccount::getMinecraftName)
+			.findFirst()
+			.orElse("bw4sinvalidname");
+	}
+	
+	
 	public String getDiscordUsername(String minecraftUsername) {
-		return accounts.entrySet().stream()
-			.filter(entry -> entry.getValue().getMinecraftName() != null && entry.getValue().getMinecraftName().equals(minecraftUsername))
-			.map(entry -> entry.getKey().getName())
+		return accounts.stream()
+			.filter(account -> account.getMinecraftName() != null && account.getMinecraftName().equals(minecraftUsername))
+			.map(PlayerAccount::getDiscordUsername)
+			.findFirst()
+			.orElse(null);
+	}
+	
+	public String getDiscordId(String minecraftUsername) {
+		return accounts.stream()
+			.filter(account -> account.getMinecraftName() != null && account.getMinecraftName().equals(minecraftUsername))
+			.map(PlayerAccount::getDiscordId)
 			.findFirst()
 			.orElse(null);
 	}
 	
 	public void setup(BukkitPlugin plugin) {
-		this.accounts.clear();
+		this.accountMap.clear();
 		
 		AtomicInteger loadedAccounts = new AtomicInteger();
 		
@@ -63,8 +93,11 @@ public class AccountCache {
 		ranked.getAllAccounts().forEach(account -> {
 			try {
 				loadedAccounts.getAndIncrement();
-				this.accounts.put(Bukkit.getOfflinePlayer(account.getMinecraftName()).getPlayer(), account);
-			} catch (Exception ignored) {}
+				this.accountMap.put(Bukkit.getPlayerExact(account.getMinecraftName()), account);
+				this.accounts.add(account);
+			} catch (Exception e) {
+				throw new RuntimeException("Failed to load account " + account.getMinecraftName(), e);
+			}
 		});
 		
 		plugin.log("&6CACHE! &aCarregadas " + loadedAccounts.get() + " contas do banco de dados.");
@@ -72,9 +105,13 @@ public class AccountCache {
 	
 	public void save() {
 		RankedRepository ranked = Repositories.RANKED;
-		this.accounts.forEach((ignored_, account) -> {
+		this.accountMap.forEach((ignored_, account) -> {
 			ranked.updateAccount(account);
 		});
 	}
 	
+	public boolean hasAccountByMinecraftName(String nickname) {
+		return this.accounts.stream()
+			.anyMatch(account -> account.getMinecraftName() != null && account.getMinecraftName().equals(nickname));
+	}
 }

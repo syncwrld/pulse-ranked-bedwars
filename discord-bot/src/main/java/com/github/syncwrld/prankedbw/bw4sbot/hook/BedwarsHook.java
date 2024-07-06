@@ -32,4 +32,7 @@ public class BedwarsHook {
 		plugin.log("BedWars1058 não está instalado.");
 	}
 	
+	public BedWars getApi() {
+		return api;
+	}
 }

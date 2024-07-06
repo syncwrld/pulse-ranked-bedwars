@@ -11,6 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 
+import java.awt.*;
+
 public class TokenInputListener implements Listener {
 	private final PRankedSpigotPlugin plugin;
 	
@@ -34,11 +36,14 @@ public class TokenInputListener implements Listener {
 		
 		if (message.equals(expectedToken)) {
 			event.setCancelled(true);
+			event.setMessage(null);
+			
 			player.sendMessage("§aVocê foi vinculado com sucesso!");
 			
 			AccountCache accountCache = plugin.getCaches().getAccountCache();
 			PlayerAccount oldAccount = accountCache.getAccount(player);
-			PlayerAccount newAccount = new PlayerAccount(playerName, tokenCache.getDiscordName(playerName), AccountData.create(discordId, oldAccount.getAccountData().getEloPoints()));
+			PlayerAccount newAccount = new PlayerAccount(player.getUniqueId(), playerName, discordId, tokenCache.getDiscordName(playerName), oldAccount.getEloPoints());
+			
 			accountCache.setAccount(player, newAccount);
 			
 			this.plugin.getBootstrapper().getApi()
@@ -53,7 +58,8 @@ public class TokenInputListener implements Listener {
 								.setDescription("Você foi vinculado com sucesso!")
 								.addField("Nickname do Minecraft", playerName, false)
 								.addField("Nickname no Discord", user.getName(), false)
-								.setFooter("© PulseMC, 2024. Todos os direitos reservados.");
+								.setFooter("© PulseMC, 2024. Todos os direitos reservados.")
+								.setColor(Color.GREEN);
 							
 							channel.sendMessage(embed)
 								.exceptionally(ignored -> null)

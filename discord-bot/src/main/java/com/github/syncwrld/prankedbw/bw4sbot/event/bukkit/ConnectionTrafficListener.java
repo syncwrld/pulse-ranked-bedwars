@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.Objects;
+
 public class ConnectionTrafficListener implements Listener {
 	
 	private final PRankedSpigotPlugin plugin;
@@ -20,7 +22,13 @@ public class ConnectionTrafficListener implements Listener {
 	@EventHandler
 	public void onConnect(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		PlayerAccount account = Repositories.RANKED.getOrCreateAccount(player.getName());
+		PlayerAccount account = Repositories.RANKED.getOrCreateAccount(player);
+		
+		if (!Objects.equals(account.getMinecraftName(), player.getName())) {
+			Repositories.RANKED.setMinecraftNameChanges(account.getMinecraftName(), player.getName());
+			account.setMinecraftName(player.getName());
+		}
+		
 		this.plugin.getCaches().getAccountCache().setAccount(player, account);
 	}
 	

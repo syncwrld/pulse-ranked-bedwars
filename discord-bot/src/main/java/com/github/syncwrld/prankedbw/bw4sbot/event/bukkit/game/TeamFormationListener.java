@@ -41,13 +41,8 @@ public class TeamFormationListener implements Listener {
 	@EventHandler
 	public void onTeamsAvailable(TeamsAvailableEvent event) {
 		Set<User> users = event.getUsers();
-		Set<Player> players = playerManager.getPlayers(users);
+		Set<Player> players = playerManager.getAvailablePlayers(plugin, users);
 		
-		/*
-		Se o número de jogadores disponíveis para a partida
-		forem menores que o número necessário para formar
-		2 times completos
-		 */
 		if ((players.size() / 2) < Configuration.PLAYERS_PER_TEAM) {
 			return;
 		}
@@ -60,76 +55,69 @@ public class TeamFormationListener implements Listener {
 		List<Player> t1 = teams.getKey().getKey();
 		List<Player> t2 = teams.getValue().getKey();
 		
-		String randomChannelId = RandomStringUtils.randomAlphanumeric(5);
+		String randomChannelId = "BW4S-" + RandomStringUtils.randomAlphanumeric(5);
 		
-		ServerVoiceChannel t1_channel = createVoiceChannel(randomChannelId, users);
-		ServerVoiceChannel t2_channel = createVoiceChannel(randomChannelId, users);
-		
-		if (t1_channel == null || t2_channel == null) {
-			return;
-		}
-		
-		Team team1 = new Team(u1, t1, t1_channel);
-		Team team2 = new Team(u2, t2, t2_channel);
-		
-		Match match = new Match(team1, team2);
-		
-		Bukkit.getScheduler().runTaskLater(
-			this.plugin,
-			() -> {
-				team1.moveAllToChannel();
-				team2.moveAllToChannel();
-			}, 40L);
-		
-		MatchAvailableEvent matchAvailableEvent = new MatchAvailableEvent(match);
-		BukkitPlugin.callEvent(matchAvailableEvent);
+		createVoiceChannel(randomChannelId + " [TIME 1]", new HashSet<>(u1)).thenAccept(voiceChannel -> {
+			if (voiceChannel == null) {
+				return;
+			}
+			
+			Team team1 = new Team(u1, t1, voiceChannel);
+			
+			createVoiceChannel(randomChannelId + " [TIME 2]", new HashSet<>(u2)).thenAccept(voiceChannelT2 -> {
+				if (voiceChannelT2 == null) {
+					return;
+				}
+				
+				Team team2 = new Team(u2, t2, voiceChannelT2);
+				Match match = new Match(team1, team2);
+				
+				Bukkit.getScheduler().runTask(this.plugin, () -> {
+					MatchAvailableEvent matchAvailableEvent = new MatchAvailableEvent(match);
+					BukkitPlugin.callEvent(matchAvailableEvent);
+				});
+			});
+		});
 	}
 	
 	private Pair<Pair<List<Player>, List<User>>, Pair<List<Player>, List<User>>> createTeams(Set<User> users) {
 		Set<Player> players = playerManager.getPlayers(users);
 		int teamSize = Configuration.PLAYERS_PER_TEAM;
 		
-		// Converte o Set<Player> para uma List<Player> e embaralha a lista
 		List<Player> allPlayers = new ArrayList<>(players);
 		Collections.shuffle(allPlayers, ThreadLocalRandom.current());
 		
-		// Cria duas sublistas para os times
-		List<Player> t1 = new ArrayList<>();
-		List<Player> t2 = new ArrayList<>();
+		List<Player> players_t1 = allPlayers.subList(0, teamSize);
+		List<Player> players_t2 = allPlayers.subList(teamSize, allPlayers.size());
 		List<User> u1 = new ArrayList<>();
 		List<User> u2 = new ArrayList<>();
 		
-		// Itera sobre os jogadores e os distribui nos times
 		AccountCache accountCache = plugin.getCaches().getAccountCache();
 		
-		for (Player player : allPlayers) {
+		for (Player player : players_t1) {
 			String discordUsername = accountCache.getDiscordUsername(player.getName());
-			
 			if (discordUsername != null) {
-				if (t1.size() < teamSize) {
-					t1.add(player);
-					users.stream()
-						.filter(user -> user.getName().equals(discordUsername))
-						.findFirst()
-						.ifPresent(u1::add);
-				}
-				
-				// Adiciona o jogador ao segundo time se não estiver cheio
-				if (t2.size() < teamSize) {
-					t2.add(player);
-					users.stream()
-						.filter(user -> user.getName().equals(discordUsername))
-						.findFirst()
-						.ifPresent(u2::add);
-				}
+				users.stream()
+					.filter(user -> user.getName().equals(discordUsername))
+					.findFirst()
+					.ifPresent(u1::add);
 			}
 		}
 		
-		return new Pair<>(new Pair<>(t1, u1), new Pair<>(t2, u2));
+		for (Player player : players_t2) {
+			String discordUsername = accountCache.getDiscordUsername(player.getName());
+			if (discordUsername != null) {
+				users.stream()
+					.filter(user -> user.getName().equals(discordUsername))
+					.findFirst()
+					.ifPresent(u2::add);
+			}
+		}
+		
+		return new Pair<>(new Pair<>(players_t1, u1), new Pair<>(players_t2, u2));
 	}
 	
-	
-	private ServerVoiceChannel createVoiceChannel(String channelName, Set<User> users) {
+	private CompletableFuture<ServerVoiceChannel> createVoiceChannel(String channelName, Set<User> users) {
 		RobotConfiguration configuration = this.plugin.getBootstrapper().getConfiguration();
 		String matchCategoryId = configuration.getMatchCategoryId();
 		
@@ -137,7 +125,7 @@ public class TeamFormationListener implements Listener {
 		
 		if (category.isEmpty()) {
 			this.plugin.log("&cA categoria de partidas não foi encontrada. Por favor, verifique suas configurações.");
-			return null;
+			return CompletableFuture.failedFuture(new IllegalStateException("Categoria não encontrada"));
 		}
 		
 		Server server = category.get().getServer();
@@ -145,45 +133,38 @@ public class TeamFormationListener implements Listener {
 		if (server != null) {
 			List<ServerVoiceChannel> voiceChannelsByName = server.getVoiceChannelsByName(channelName);
 			if (voiceChannelsByName != null && !voiceChannelsByName.isEmpty()) {
-				return null;
+				return CompletableFuture.completedFuture(voiceChannelsByName.get(0));
 			}
 		}
 		
-		CompletableFuture<ServerVoiceChannel> builderFuture = server.createVoiceChannelBuilder().setCategory(category.get()).setName(channelName).setUserlimit(users.size()).create();
-		
-		builderFuture.thenAccept((channel) -> {
-			Role everyoneRole = server.getEveryoneRole();
-			
-			channel.createUpdater()
-				.addPermissionOverwrite(everyoneRole,
-					new PermissionsBuilder()
-						.setDenied(PermissionType.CONNECT).build())
-				.update().join();
-			
-			channel.createUpdater()
-				.addPermissionOverwrite(everyoneRole,
-					new PermissionsBuilder()
-						.setDenied(PermissionType.SPEAK).build())
-				.update().join();
-			
-			channel.createUpdater()
-				.addPermissionOverwrite(everyoneRole,
-					new PermissionsBuilder()
-						.setDenied(PermissionType.VIEW_CHANNEL).build())
-				.update().join();
-			
-			for (User user : users) {
-				channel.createUpdater().addPermissionOverwrite(user,
+		assert server != null;
+		return server.createVoiceChannelBuilder()
+			.setCategory(category.get())
+			.setName(channelName)
+			.setUserlimit(users.size())
+			.create()
+			.thenCompose(channel -> {
+				Role everyoneRole = server.getEveryoneRole();
+				
+				CompletableFuture<Void> updateFuture = channel.createUpdater()
+					.addPermissionOverwrite(everyoneRole,
 						new PermissionsBuilder()
-							.setAllowed(PermissionType.CONNECT).build())
-					.update().join();
-			}
-		}).exceptionally((e) -> {
-			this.plugin.log("&cUm erro ocorreu ao criar o canal de voz. Por favor, verifique suas configurações.");
-			return null;
-		});
-		
-		return builderFuture.join();
+							.setDenied(PermissionType.VIEW_CHANNEL, PermissionType.SPEAK, PermissionType.CONNECT).build())
+					.update();
+				
+				for (User user : users) {
+					updateFuture = updateFuture.thenCompose(v -> channel.createUpdater()
+						.addPermissionOverwrite(user,
+							new PermissionsBuilder()
+								.setAllowed(PermissionType.CONNECT, PermissionType.VIEW_CHANNEL, PermissionType.SPEAK).build())
+						.update());
+				}
+				
+				return updateFuture.thenApply(v -> channel);
+			})
+			.exceptionally(e -> {
+				this.plugin.log("&cUm erro ocorreu ao criar o canal de voz. Por favor, verifique suas configurações.");
+				return null;
+			});
 	}
-	
 }

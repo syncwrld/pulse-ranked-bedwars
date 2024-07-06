@@ -27,7 +27,7 @@ public class PlayerManager {
 	
 	public int howManyAreBind(Set<User> users) {
 		AccountCache accountCache = plugin.getCaches().getAccountCache();
-		Predicate<User> hasAccount = user -> accountCache.hasAccount(user.getName());
+		Predicate<User> hasAccount = user -> accountCache.hasAccountById("" + user.getId());
 		
 		return (int) users.stream()
 			.filter(hasAccount)
@@ -56,6 +56,16 @@ public class PlayerManager {
 				plugin.getCaches().getAccountCache().getMinecraftUsername(user.getName())
 			))
 			.filter(Objects::nonNull)
+			.collect(Collectors.toSet());
+	}
+	
+	public Set<Player> getAvailablePlayers(PRankedSpigotPlugin plugin, Set<User> users) {
+		return users.stream()
+			.map(user -> Bukkit.getPlayerExact(
+				plugin.getCaches().getAccountCache().getMinecraftUsername(user.getName())
+			))
+			.filter(Objects::nonNull)
+			.filter(player -> !plugin.getCaches().getMatchesCache().isPlaying(plugin, player))
 			.collect(Collectors.toSet());
 	}
 	

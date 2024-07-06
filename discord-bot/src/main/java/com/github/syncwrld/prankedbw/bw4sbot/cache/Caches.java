@@ -34,5 +34,6 @@ public class Caches {
 	
 	public void save() {
 		accountCache.save();
+		matchesCache.save();
 	}
 }

@@ -19,9 +19,6 @@ import org.javacord.api.interaction.SlashCommand;
 import org.javacord.api.interaction.SlashCommandOption;
 import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 @Getter(AccessLevel.PUBLIC)
 public class PRankedJavacordRobot implements ApplicationBootstrapper {
 	private final PRankedSpigotPlugin plugin;
@@ -75,8 +72,12 @@ public class PRankedJavacordRobot implements ApplicationBootstrapper {
 			new MatchListener(this.plugin)
 		);
 		
-		this.api = new DiscordApiBuilder().setAllIntents().setToken(botToken).login().join();
-		Bukkit.getScheduler().runTaskTimer(this.plugin, new MatchAvailabilityLabor(this), 0, 20);
+		this.api = new DiscordApiBuilder()
+			.setAllIntents()
+			.setToken(botToken)
+			.login()
+			.join();
+		Bukkit.getScheduler().runTaskTimer(this.plugin, new MatchAvailabilityLabor(this), 0, 80);
 		
 		/*
 		Criando o comando /bind no Discord
