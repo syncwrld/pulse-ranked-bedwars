@@ -1,6 +1,7 @@
 package com.github.syncwrld.prankedbw.bw4sbot.model.game;
 
 import org.bukkit.entity.Player;
+import org.javacord.api.entity.channel.ServerTextChannel;
 
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -9,11 +10,13 @@ public class Match {
 	private final String id;
 	private final Team team1;
 	private final Team team2;
+	private final ServerTextChannel matchChannel;
 	
-	public Match(Team team1, Team team2) {
+	public Match(Team team1, Team team2, ServerTextChannel matchChannel) {
 		this.id = createId(team1, team2);
 		this.team1 = team1;
 		this.team2 = team2;
+		this.matchChannel = matchChannel;
 	}
 	
 	private String createId(Team team1, Team team2) {
@@ -36,5 +39,9 @@ public class Match {
 	
 	public String getId() {
 		return id;
+	}
+	
+	public ServerTextChannel getMatchChannel() {
+		return matchChannel;
 	}
 }

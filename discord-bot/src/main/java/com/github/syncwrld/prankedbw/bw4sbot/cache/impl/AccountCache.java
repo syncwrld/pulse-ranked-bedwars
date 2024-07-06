@@ -20,6 +20,13 @@ public class AccountCache {
 		return accountMap.get(player);
 	}
 	
+	public PlayerAccount getAccountByDiscordId(String discordId) {
+		return accounts.stream()
+			.filter(account -> account.getDiscordId() != null && account.getDiscordId().equals(discordId))
+			.findFirst()
+			.orElse(null);
+	}
+	
 	public void setAccount(Player player, PlayerAccount account) {
 		accountMap.put(player, account);
 		accounts.add(account);

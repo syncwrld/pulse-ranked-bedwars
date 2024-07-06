@@ -75,6 +75,7 @@ public class MatchesCache {
 			Team team1 = match.getTeam1();
 			Team team2 = match.getTeam2();
 			
+			match.getMatchChannel().delete().join();
 			team1.getVoiceChannel().delete().join();
 			team2.getVoiceChannel().delete().join();
 		});

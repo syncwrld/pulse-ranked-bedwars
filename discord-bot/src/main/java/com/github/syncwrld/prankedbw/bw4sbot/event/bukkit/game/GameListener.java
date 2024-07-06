@@ -34,7 +34,7 @@ public class GameListener implements Listener {
 		
 		player.sendMessage("§a+ §e" + points + " ELO!");
 		
-		addPoints(player, points);
+		addEloPoints(player, points);
 	}
 	
 	@EventHandler
@@ -44,7 +44,7 @@ public class GameListener implements Listener {
 			int points = randomPoints(10, 20);
 			player.sendMessage("§a+ §e" + points + " ELO!");
 			
-			addPoints(player, points);
+			addEloPoints(player, points);
 		}
 		
 		Match match = null;
@@ -67,10 +67,10 @@ public class GameListener implements Listener {
 		
 		player.sendMessage("§a+ §e" + points + " ELO!");
 		
-		addPoints(player, points);
+		addEloPoints(player, points);
 	}
 	
-	private void addPoints(Player player, int points) {
+	private void addEloPoints(Player player, int points) {
 		PlayerAccount account = caches.getAccountCache().getAccount(player);
 		
 		if (account == null) {

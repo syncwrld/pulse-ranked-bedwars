@@ -80,6 +80,7 @@ public class GameManager implements Listener, ITeamAssigner {
 				arena.setStatus(GameState.waiting);
 			} else {
 				arena.setStatus(GameState.starting);
+				
 			}
 		}
 	}
@@ -183,7 +184,34 @@ public class GameManager implements Listener, ITeamAssigner {
 			matchesCache.remove(player);
 		}
 		
+		match.getMatchChannel().createUpdater().setTopic("Este canal será deletado em 25 segundos").update().join();
+		match.getMatchChannel().deleteAfter(Duration.ofSeconds(25)).join();
+		
 		team1.getVoiceChannel().deleteAfter(Duration.ofSeconds(2)).join();
 		team2.getVoiceChannel().deleteAfter(Duration.ofSeconds(2)).join();
+	}
+	
+	public IArena getArena(Match match) {
+		BedwarsHook bedwars = plugin.getBedwars();
+		
+		Player randomPlayer = null;
+		int index = 0;
+		
+		while (randomPlayer == null && index < match.getTeam1().getPlayers().size()) {
+			randomPlayer = match.getTeam1().getPlayers().get(index);
+			index++;
+		}
+		
+		if (randomPlayer == null) {
+			index = 0;
+			
+			while (randomPlayer == null && index < match.getTeam2().getPlayers().size()) {
+				randomPlayer = match.getTeam2().getPlayers().get(index);
+				index++;
+			}
+		}
+		
+		
+		return bedwars.getApi().getArenaUtil().getArenaByPlayer(randomPlayer);
 	}
 }

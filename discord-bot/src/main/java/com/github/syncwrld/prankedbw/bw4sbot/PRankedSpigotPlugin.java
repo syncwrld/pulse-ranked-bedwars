@@ -1,5 +1,7 @@
 package com.github.syncwrld.prankedbw.bw4sbot;
 
+import com.github.syncwrld.prankedbw.bw4sbot.api.Ranked4SApi;
+import com.github.syncwrld.prankedbw.bw4sbot.api.impl.Ranked4SApiImpl;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.Caches;
 import com.github.syncwrld.prankedbw.bw4sbot.hook.BedwarsHook;
 import com.github.syncwrld.prankedbw.bw4sbot.manager.GameManager;
@@ -8,8 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
 import org.bukkit.Bukkit;
-
-import java.util.List;
+import org.bukkit.plugin.ServicePriority;
 
 @Getter(AccessLevel.PUBLIC)
 public class PRankedSpigotPlugin extends BukkitPlugin {
@@ -63,6 +64,18 @@ public class PRankedSpigotPlugin extends BukkitPlugin {
 		
 		this.bootstrapper = new PRankedJavacordRobot(this);
 		this.bootstrapper.enable();
+		
+		this.registerApi();
+	}
+	
+	private void registerApi() {
+		Ranked4SApi api = new Ranked4SApiImpl(this);
+		this.getServer().getServicesManager().register(
+			Ranked4SApi.class,
+			api,
+			this,
+			ServicePriority.Normal
+		);
 	}
 	
 	@Override

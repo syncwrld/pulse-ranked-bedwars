@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.javacord.api.entity.channel.ChannelCategory;
+import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.PermissionsBuilder;
@@ -57,24 +58,26 @@ public class TeamFormationListener implements Listener {
 		
 		String randomChannelId = "BW4S-" + RandomStringUtils.randomAlphanumeric(5);
 		
-		createVoiceChannel(randomChannelId + " [TIME 1]", new HashSet<>(u1)).thenAccept(voiceChannel -> {
-			if (voiceChannel == null) {
-				return;
-			}
-			
-			Team team1 = new Team(u1, t1, voiceChannel);
-			
-			createVoiceChannel(randomChannelId + " [TIME 2]", new HashSet<>(u2)).thenAccept(voiceChannelT2 -> {
-				if (voiceChannelT2 == null) {
+		createTextChannel(randomChannelId, users).thenAccept(textChannel -> {
+			createVoiceChannel(randomChannelId + " [TIME 1]", new HashSet<>(u1)).thenAccept(voiceChannel -> {
+				if (voiceChannel == null) {
 					return;
 				}
 				
-				Team team2 = new Team(u2, t2, voiceChannelT2);
-				Match match = new Match(team1, team2);
+				Team team1 = new Team(u1, t1, voiceChannel);
 				
-				Bukkit.getScheduler().runTask(this.plugin, () -> {
-					MatchAvailableEvent matchAvailableEvent = new MatchAvailableEvent(match);
-					BukkitPlugin.callEvent(matchAvailableEvent);
+				createVoiceChannel(randomChannelId + " [TIME 2]", new HashSet<>(u2)).thenAccept(voiceChannelT2 -> {
+					if (voiceChannelT2 == null) {
+						return;
+					}
+					
+					Team team2 = new Team(u2, t2, voiceChannelT2);
+					Match match = new Match(team1, team2, textChannel);
+					
+					Bukkit.getScheduler().runTask(this.plugin, () -> {
+						MatchAvailableEvent matchAvailableEvent = new MatchAvailableEvent(match);
+						BukkitPlugin.callEvent(matchAvailableEvent);
+					});
 				});
 			});
 		});
@@ -167,4 +170,58 @@ public class TeamFormationListener implements Listener {
 				return null;
 			});
 	}
+	
+	private CompletableFuture<ServerTextChannel> createTextChannel(String channelName, Set<User> users) {
+		RobotConfiguration configuration = this.plugin.getBootstrapper().getConfiguration();
+		String matchCategoryId = configuration.getMatchCategoryId();
+		
+		Optional<ChannelCategory> category = this.plugin.getBootstrapper().getApi().getChannelCategoryById(matchCategoryId);
+		
+		if (category.isEmpty()) {
+			this.plugin.log("&cA categoria de partidas não foi encontrada. Por favor, verifique suas configurações.");
+			return CompletableFuture.failedFuture(new IllegalStateException("Categoria não encontrada"));
+		}
+		
+		Server server = category.get().getServer();
+		
+		if (server != null) {
+			List<ServerTextChannel> textChannelsByName = server.getTextChannelsByName(channelName);
+			if (textChannelsByName != null && !textChannelsByName.isEmpty()) {
+				return CompletableFuture.completedFuture(textChannelsByName.get(0));
+			}
+		}
+		
+		assert server != null;
+		return server.createTextChannelBuilder()
+			.setCategory(category.get())
+			.setName(channelName)
+			.create()
+			.thenCompose(channel -> {
+				Role everyoneRole = server.getEveryoneRole();
+				
+				CompletableFuture<Void> updateFuture = channel.createUpdater()
+					.addPermissionOverwrite(everyoneRole,
+						new PermissionsBuilder()
+							.setDenied(PermissionType.VIEW_CHANNEL, PermissionType.SEND_MESSAGES).build())
+					.update();
+				
+				for (User user : users) {
+					updateFuture = updateFuture.thenCompose(v -> channel.createUpdater()
+						.addPermissionOverwrite(user,
+							new PermissionsBuilder()
+								.setAllowed(PermissionType.VIEW_CHANNEL, PermissionType.SEND_MESSAGES)
+								.setDenied(PermissionType.MENTION_EVERYONE, PermissionType.MANAGE_THREADS)
+								.build())
+						.update());
+				}
+				
+				return updateFuture.thenApply(v -> channel);
+			})
+			.exceptionally(e -> {
+				this.plugin.log("&cUm erro ocorreu ao criar o canal de texto. Por favor, verifique suas configurações.");
+				return null;
+			});
+	}
+	
+	
 }
