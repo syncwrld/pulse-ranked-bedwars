@@ -98,6 +98,7 @@ public class TeamFormationListener implements Listener {
 		AccountCache accountCache = plugin.getCaches().getAccountCache();
 		
 		for (Player player : players_t1) {
+			if (player == null) continue;
 			String discordUsername = accountCache.getDiscordUsername(player.getName());
 			if (discordUsername != null) {
 				users.stream()

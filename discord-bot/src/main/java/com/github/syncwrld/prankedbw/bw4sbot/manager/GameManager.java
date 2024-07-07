@@ -76,11 +76,14 @@ public class GameManager implements Listener, ITeamAssigner {
 			
 			List<Player> players = arena.getPlayers();
 			
-			if (players.size() != (Configuration.PLAYERS_PER_TEAM * 2)) {
-				arena.setStatus(GameState.waiting);
+			int size = players.size();
+			if ((size + 1) != (Configuration.PLAYERS_PER_TEAM * 2)) {
+				arena.changeStatus(GameState.waiting);
 			} else {
-				arena.setStatus(GameState.starting);
+				arena.changeStatus(GameState.starting);
+				arena.getStartingTask().setCountdown(10);
 				
+				com.tomkeuper.bedwars.BedWars.debug = true;
 			}
 		}
 	}
@@ -154,17 +157,13 @@ public class GameManager implements Listener, ITeamAssigner {
 		ITeam teamTwo = arena.getTeam("Azul");
 		
 		if (teamOne != null) {
-			team1.getPlayers().forEach((teamPlayer) -> {
+			for (Player teamPlayer : team1.getPlayers()) {
 				teamOne.addPlayers(teamPlayer);
-				System.out.println("Team 1 -> Adicionado ao time vermelho - " + teamPlayer.getName());
-			});
+			}
 		}
 		
 		if (teamTwo != null) {
-			team2.getPlayers().forEach((teamPlayer) -> {
-				teamTwo.addPlayers(teamPlayer);
-				System.out.println("Team 2 -> Adicionado ao time azul - " + teamPlayer.getName());
-			});
+			team2.getPlayers().forEach(teamTwo::addPlayers);
 		}
 		
 		removeOtherTeams(arena);

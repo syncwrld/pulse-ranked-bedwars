@@ -7,5 +7,5 @@ public class Configuration {
 	/*
 	Sempre serão 2 times, mas escolha a quantidade de jogadores em cada time
 	 */
-	public static final int PLAYERS_PER_TEAM = 4;
+	public static final int PLAYERS_PER_TEAM = 1;
 }

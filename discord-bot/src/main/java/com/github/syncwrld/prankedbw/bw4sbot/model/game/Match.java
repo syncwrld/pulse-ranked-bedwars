@@ -11,12 +11,14 @@ public class Match {
 	private final Team team1;
 	private final Team team2;
 	private final ServerTextChannel matchChannel;
+	private boolean strikeable;
 	
 	public Match(Team team1, Team team2, ServerTextChannel matchChannel) {
 		this.id = createId(team1, team2);
 		this.team1 = team1;
 		this.team2 = team2;
 		this.matchChannel = matchChannel;
+		this.strikeable = true;
 	}
 	
 	private String createId(Team team1, Team team2) {
@@ -43,5 +45,13 @@ public class Match {
 	
 	public ServerTextChannel getMatchChannel() {
 		return matchChannel;
+	}
+	
+	public boolean isStrikeable() {
+		return strikeable;
+	}
+	
+	public void setStrikeable(boolean strikeable) {
+		this.strikeable = strikeable;
 	}
 }
