@@ -27,6 +27,15 @@ public class BindCommandListener implements SlashCommandCreateListener {
 		commandInteraction.getArgumentStringValueByName("Nickname")
 			.ifPresentOrElse(nickname -> {
 					AccountCache accountCache = plugin.getCaches().getAccountCache();
+					String userId = commandInteraction.getUser().getIdAsString();
+					
+					if (accountCache.hasAccountById(userId)) {
+						commandInteraction.createImmediateResponder()
+							.setContent("Você já vinculou sua conta.")
+							.setFlags(MessageFlag.EPHEMERAL)
+							.respond().join();
+						return;
+					}
 					
 					/*
 					Verificando se o nickname já está vinculado ao Minecraft

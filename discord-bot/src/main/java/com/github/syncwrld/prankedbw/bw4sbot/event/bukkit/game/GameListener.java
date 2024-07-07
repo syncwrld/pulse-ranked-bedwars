@@ -81,6 +81,23 @@ public class GameListener implements Listener {
 		caches.getAccountCache().setAccount(player, account);
 	}
 	
+	private void removeEloPoints(Player player, int points) {
+		PlayerAccount account = caches.getAccountCache().getAccount(player);
+		
+		if (account == null) {
+			return;
+		}
+		
+		int newEloPoints = account.getEloPoints() - points;
+		
+		if (newEloPoints < 0) {
+			newEloPoints = 0;
+		}
+		
+		account.setEloPoints(newEloPoints);
+		caches.getAccountCache().setAccount(player, account);
+	}
+	
 	private int randomPoints(int min, int max) {
 		return ThreadLocalRandom.current().nextInt(min, max);
 	}

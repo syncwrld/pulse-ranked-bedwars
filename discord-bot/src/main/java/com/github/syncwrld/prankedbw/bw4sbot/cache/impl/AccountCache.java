@@ -119,6 +119,6 @@ public class AccountCache {
 	
 	public boolean hasAccountByMinecraftName(String nickname) {
 		return this.accounts.stream()
-			.anyMatch(account -> account.getMinecraftName() != null && account.getMinecraftName().equals(nickname));
+			.anyMatch(account -> account.getMinecraftName() != null && account.getMinecraftName().equals(nickname) && account.getDiscordId() != null && !(account.getDiscordId().isEmpty()));
 	}
 }

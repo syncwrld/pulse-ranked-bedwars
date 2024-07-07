@@ -3,7 +3,6 @@ package com.github.syncwrld.prankedbw.bw4sbot.event.bukkit;
 import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.AccountCache;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.TokenCache;
-import com.github.syncwrld.prankedbw.bw4sbot.model.data.AccountData;
 import com.github.syncwrld.prankedbw.bw4sbot.model.data.PlayerAccount;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,6 +35,7 @@ public class TokenInputListener implements Listener {
 		
 		if (message.equals(expectedToken)) {
 			event.setCancelled(true);
+			event.getRecipients().clear();
 			event.setMessage(null);
 			
 			player.sendMessage("§aVocê foi vinculado com sucesso!");
