@@ -1,15 +1,15 @@
-package com.github.syncwrld.prankedbw.bw4sbot.api.event;
+package com.github.syncwrld.prankedbw.bw4sbot.api.event.game;
 
 import com.github.syncwrld.prankedbw.bw4sbot.model.game.Match;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class MatchAvailableEvent extends Event {
+public class MatchStartEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
 	
 	private final Match match;
 	
-	public MatchAvailableEvent(Match match) {
+	public MatchStartEvent(Match match) {
 		this.match = match;
 	}
 	

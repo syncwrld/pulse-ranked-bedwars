@@ -1,4 +1,4 @@
-package com.github.syncwrld.prankedbw.bw4sbot.api.event;
+package com.github.syncwrld.prankedbw.bw4sbot.api.event.other;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

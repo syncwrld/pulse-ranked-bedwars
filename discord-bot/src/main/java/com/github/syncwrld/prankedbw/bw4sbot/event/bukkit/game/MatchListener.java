@@ -2,12 +2,14 @@ package com.github.syncwrld.prankedbw.bw4sbot.event.bukkit.game;
 
 import com.github.syncwrld.prankedbw.bw4sbot.Configuration;
 import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
-import com.github.syncwrld.prankedbw.bw4sbot.api.event.MatchAvailableEvent;
+import com.github.syncwrld.prankedbw.bw4sbot.api.event.game.MatchAvailableEvent;
+import com.github.syncwrld.prankedbw.bw4sbot.api.event.game.MatchStartEvent;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.MatchesCache;
 import com.github.syncwrld.prankedbw.bw4sbot.manager.GameManager;
 import com.github.syncwrld.prankedbw.bw4sbot.model.game.Match;
 import com.github.syncwrld.prankedbw.bw4sbot.model.game.Team;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -92,6 +94,9 @@ public class MatchListener implements Listener {
 		team2.moveAllToChannel(plugin);
 		
 		plugin.log("&bGAME! &aOs jogadores já foram teleportados para a arena e já estão na sala de voz dos seus respectivos times.");
+	
+		MatchStartEvent matchStartEvent = new MatchStartEvent(match);
+		BukkitPlugin.callEvent(matchStartEvent);
 	}
 	
 	public String transform(List<Player> players) {

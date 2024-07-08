@@ -2,8 +2,8 @@ package com.github.syncwrld.prankedbw.bw4sbot.event.bukkit.game;
 
 import com.github.syncwrld.prankedbw.bw4sbot.Configuration;
 import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
-import com.github.syncwrld.prankedbw.bw4sbot.api.event.MatchAvailableEvent;
-import com.github.syncwrld.prankedbw.bw4sbot.api.event.TeamsAvailableEvent;
+import com.github.syncwrld.prankedbw.bw4sbot.api.event.game.MatchAvailableEvent;
+import com.github.syncwrld.prankedbw.bw4sbot.api.event.other.TeamsAvailableEvent;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.AccountCache;
 import com.github.syncwrld.prankedbw.bw4sbot.manager.PlayerManager;
 import com.github.syncwrld.prankedbw.bw4sbot.model.config.RobotConfiguration;
@@ -72,7 +72,7 @@ public class TeamFormationListener implements Listener {
 					}
 					
 					Team team2 = new Team(u2, t2, voiceChannelT2);
-					Match match = new Match(team1, team2, textChannel);
+					Match match = new Match(this.plugin, team1, team2, textChannel);
 					
 					Bukkit.getScheduler().runTask(this.plugin, () -> {
 						MatchAvailableEvent matchAvailableEvent = new MatchAvailableEvent(match);

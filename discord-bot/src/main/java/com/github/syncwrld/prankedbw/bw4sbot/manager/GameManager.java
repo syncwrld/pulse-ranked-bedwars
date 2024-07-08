@@ -2,6 +2,7 @@ package com.github.syncwrld.prankedbw.bw4sbot.manager;
 
 import com.github.syncwrld.prankedbw.bw4sbot.Configuration;
 import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
+import com.github.syncwrld.prankedbw.bw4sbot.api.event.game.MatchEndEvent;
 import com.github.syncwrld.prankedbw.bw4sbot.cache.impl.MatchesCache;
 import com.github.syncwrld.prankedbw.bw4sbot.event.bukkit.game.GameListener;
 import com.github.syncwrld.prankedbw.bw4sbot.hook.BedwarsHook;
@@ -15,11 +16,13 @@ import com.tomkeuper.bedwars.api.arena.team.ITeamAssigner;
 import com.tomkeuper.bedwars.api.events.gameplay.TeamAssignEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerJoinArenaEvent;
 import com.tomkeuper.bedwars.api.events.server.ArenaEnableEvent;
+import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +86,11 @@ public class GameManager implements Listener, ITeamAssigner {
 				arena.changeStatus(GameState.starting);
 				arena.getStartingTask().setCountdown(10);
 				
-				com.tomkeuper.bedwars.BedWars.debug = true;
+				Match newMatch = new Match(plugin, match.getTeam1(), match.getTeam2(), match.getMatchChannel());
+				newMatch.setStartTime(Instant.now());
+				
+				plugin.getCaches().getMatchesCache().remove(match);
+				plugin.getCaches().getMatchesCache().insert(newMatch);
 			}
 		}
 	}
@@ -169,7 +176,7 @@ public class GameManager implements Listener, ITeamAssigner {
 		removeOtherTeams(arena);
 	}
 	
-	public void finishMatch(Match match) {
+	public void finishMatch(Match match, boolean striked) {
 		Team team1 = match.getTeam1();
 		Team team2 = match.getTeam2();
 		
@@ -183,11 +190,12 @@ public class GameManager implements Listener, ITeamAssigner {
 			matchesCache.remove(player);
 		}
 		
-		match.getMatchChannel().createUpdater().setTopic("Este canal será deletado em 25 segundos").update().join();
-		match.getMatchChannel().deleteAfter(Duration.ofSeconds(25)).join();
+		MatchEndEvent matchEndEvent = new MatchEndEvent(match, striked);
+		BukkitPlugin.callEvent(matchEndEvent);
 		
-		team1.getVoiceChannel().deleteAfter(Duration.ofSeconds(2)).join();
-		team2.getVoiceChannel().deleteAfter(Duration.ofSeconds(2)).join();
+		match.getMatchChannel().createUpdater().setTopic("Partida finalizada!").update().thenCompose(ignored -> null);
+		team1.getVoiceChannel().deleteAfter(Duration.ofSeconds(2)).thenCompose(ignored -> null);
+		team2.getVoiceChannel().deleteAfter(Duration.ofSeconds(2)).thenCompose(ignored -> null);
 	}
 	
 	public IArena getArena(Match match) {

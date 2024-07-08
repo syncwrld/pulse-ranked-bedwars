@@ -15,6 +15,8 @@ import me.syncwrld.booter.ApplicationBootstrapper;
 import org.bukkit.Bukkit;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.activity.ActivityType;
+import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.interaction.SlashCommand;
 import org.javacord.api.interaction.SlashCommandOption;
 import org.javacord.api.util.logging.FallbackLoggerConfiguration;
@@ -77,6 +79,8 @@ public class PRankedJavacordRobot implements ApplicationBootstrapper {
 			.setToken(botToken)
 			.login()
 			.join();
+		
+		api.updateActivity(ActivityType.PLAYING, "Ranked 4S com outros jogadores!");
 		Bukkit.getScheduler().runTaskTimer(this.plugin, new MatchAvailabilityLabor(this), 0, 80);
 		
 		/*

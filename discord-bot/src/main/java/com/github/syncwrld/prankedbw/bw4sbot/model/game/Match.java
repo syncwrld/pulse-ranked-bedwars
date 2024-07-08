@@ -1,34 +1,42 @@
 package com.github.syncwrld.prankedbw.bw4sbot.model.game;
 
+import com.github.syncwrld.prankedbw.bw4sbot.PRankedSpigotPlugin;
 import org.bukkit.entity.Player;
 import org.javacord.api.entity.channel.ServerTextChannel;
 
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
+import java.time.Instant;
+import java.util.HashMap;
 
 public class Match {
+	private final PRankedSpigotPlugin plugin;
 	private final String id;
 	private final Team team1;
 	private final Team team2;
 	private final ServerTextChannel matchChannel;
+	private final HashMap<Player, Integer> eloChanges;
+	private Instant startTime;
 	private boolean strikeable;
 	
-	public Match(Team team1, Team team2, ServerTextChannel matchChannel) {
-		this.id = createId(team1, team2);
+	public Match(PRankedSpigotPlugin plugin, Team team1, Team team2, ServerTextChannel matchChannel) {
+		this.plugin = plugin;
+		this.startTime = Instant.now();
+		this.id = createId();
 		this.team1 = team1;
 		this.team2 = team2;
 		this.matchChannel = matchChannel;
 		this.strikeable = true;
+		this.eloChanges = new HashMap<>();
 	}
 	
-	private String createId(Team team1, Team team2) {
-		Player t1_player = team1.getPlayers().get(ThreadLocalRandom.current().nextInt(0, team1.getPlayers().size()));
-		Player t2_player = team2.getPlayers().get(ThreadLocalRandom.current().nextInt(0, team2.getPlayers().size()));
+	private String createId() {
+		int currentMatchId = plugin.getConfiguration().getInt("current-match-id");
+		int nextId = currentMatchId + 1;
 		
-		UUID t1_randomUUID = UUID.nameUUIDFromBytes(t1_player.getName().getBytes());
-		UUID t2_randomUUID = UUID.nameUUIDFromBytes(t2_player.getName().getBytes());
+		plugin.getConfiguration().set("current-match-id", nextId);
+		plugin.getConfiguration().save();
+		plugin.getConfiguration().reload();
 		
-		return String.format("bw4s-%s%s", t1_randomUUID.toString().substring(0, 2), t2_randomUUID.toString().substring(0, 2));
+		return String.format("bw4s-%d", nextId);
 	}
 	
 	public Team getTeam1() {
@@ -53,5 +61,29 @@ public class Match {
 	
 	public void setStrikeable(boolean strikeable) {
 		this.strikeable = strikeable;
+	}
+	
+	public Instant getStartTime() {
+		return startTime;
+	}
+	
+	public void setStartTime(Instant startTime) {
+		this.startTime = startTime;
+	}
+	
+	public HashMap<Player, Integer> getEloChanges() {
+		return eloChanges;
+	}
+	
+	public void setEloPoints(Player player, int points) {
+		eloChanges.put(player, points);
+	}
+	
+	public void addEloPoints(Player player, int points) {
+		eloChanges.put(player, eloChanges.getOrDefault(player, 0) + points);
+	}
+	
+	public void removeEloPoints(Player player, int points) {
+		eloChanges.put(player, eloChanges.getOrDefault(player, 0) - points);
 	}
 }

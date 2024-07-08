@@ -2,9 +2,10 @@ package com.github.syncwrld.prankedbw.bw4sbot.task;
 
 import com.github.syncwrld.prankedbw.bw4sbot.Configuration;
 import com.github.syncwrld.prankedbw.bw4sbot.PRankedJavacordRobot;
-import com.github.syncwrld.prankedbw.bw4sbot.api.event.TeamsAvailableEvent;
+import com.github.syncwrld.prankedbw.bw4sbot.api.event.other.TeamsAvailableEvent;
 import com.github.syncwrld.prankedbw.bw4sbot.manager.GameManager;
 import com.github.syncwrld.prankedbw.bw4sbot.manager.PlayerManager;
+import com.github.syncwrld.prankedbw.bw4sbot.model.data.PlayerAccount;
 import me.syncwrld.booter.minecraft.loader.BukkitPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -62,6 +63,17 @@ public class MatchAvailabilityLabor implements Runnable {
 				
 				int bindAmount = this.playerManager.howManyAreBind(playersWithRole);
 				int playersPerTeam = Configuration.PLAYERS_PER_TEAM;
+				
+				playersWithRole.forEach(roledPlayer -> {
+					PlayerAccount roledPlayerAccount = this.robot.getPlugin().getCaches().getAccountCache().getAccountByDiscordId(roledPlayer.getIdAsString());
+					
+					if (roledPlayerAccount != null) {
+						roledPlayer.updateNickname(
+							registeredRole.getServer(),
+							roledPlayer.getName() + " [" + roledPlayerAccount.getEloPoints() + "]"
+						).thenCompose(ignored_ -> null);
+					}
+				});
 				
                 /*
                 Se o número de jogadores disponíveis para a partida

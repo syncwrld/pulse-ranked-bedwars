@@ -15,6 +15,9 @@ database:
   username: 'root'
   password: ''
 
+# Não mexa no valor abaixo #
+current-match-id: 0
+
 # Configure o token do seu bot #
 discord-bot-token: ''
 
@@ -27,9 +30,6 @@ voice-channel-category-id: ''
 
 # Cargo que será dado aos jogadores vinculados #
 registered-role-id: ''
-
-# Mensagem de status do bot #
-bot-status-message: 'Esperando por uma nova partida!'
 
 # IDs das arenas que serão usadas em partidas 4s #
 arena-group: 'Ranked4s'
